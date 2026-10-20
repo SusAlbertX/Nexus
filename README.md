@@ -10,7 +10,7 @@ Aquí vamos a guardar toda la documentación en latex, el codigo de la web y las
 
 ## Roles y tareas
 - **Coordinación y Redes (Sergio):** Encargado de montar la red, configurar los servidores (DHCP, DNS, etc.)
-- **Documentación y Web (Albert):** Encargado de escribir la memoria en LaTeX, hacer la página web con HTML/CSS, organizar el Kanban y probar que todo funcione.
+- **Documentación y Web (Albert):** Encargado de escribir la memoria en latex, hacer la página web con HTML/CSS, organizar el Kanban y probar que todo funcione.
 
 ## ¿Cuándo está terminada una tarea?
 Para que una tarea pase a la columna de "Hecho" tiene que cumplir:
