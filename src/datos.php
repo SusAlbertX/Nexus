@@ -1,3 +1,25 @@
+<?php
+require 'config.php';
+
+/* ============================================================
+   CAPA DE DATOS (MOCK)
+   Cuando configures SQL, sustituye el cuerpo de cada función
+   por la consulta correspondiente. La forma del array devuelto
+   debe ser la misma que las columnas de la tabla.
+   ============================================================ */
+
+function datos_juegos(): array {
+    /* SQL futuro:
+       return getPDO()->query("SELECT * FROM juegos ORDER BY id")->fetchAll();
+    */
+    return [
+        ['id' => 1, 'slug' => 'fortnite', 'nombre' => 'Fortnite'],
+        ['id' => 2, 'slug' => 'rocket',   'nombre' => 'Rocket League'],
+        ['id' => 3, 'slug' => 'cod',      'nombre' => 'Call of Duty'],
+        ['id' => 4, 'slug' => 'cs2',      'nombre' => 'CS2'],
+    ];
+}
+
 function datos_torneos(?string $juegoSlug = null): array {
     /* SQL futuro:
        if ($juegoSlug === null || $juegoSlug === 'todos') {
@@ -7,7 +29,6 @@ function datos_torneos(?string $juegoSlug = null): array {
        $stmt->execute([$juegoSlug]);
        return $stmt->fetchAll();
     */
-    
     $todos = [
         [
             'id' => 1, 'juego_id' => 1, 'juego_slug' => 'fortnite', 'juego_nombre' => 'Fortnite',
@@ -46,8 +67,17 @@ function datos_torneos(?string $juegoSlug = null): array {
     if ($juegoSlug === null || $juegoSlug === 'todos') {
         return $todos;
     }
-    
-    return array_values(array_filter($todos, function($t) use ($juegoSlug) {
-        return $t['juego_slug'] === $juegoSlug;
-    }));
+    return array_values(array_filter($todos, fn($t) => $t['juego_slug'] === $juegoSlug));
+}
+
+function datos_torneo(int $id): ?array {
+    /* SQL futuro:
+       $stmt = getPDO()->prepare("SELECT * FROM torneos_con_inscritos WHERE id = ?");
+       $stmt->execute([$id]);
+       return $stmt->fetch() ?: null;
+    */
+    foreach (datos_torneos() as $t) {
+        if ((int)$t['id'] === $id) return $t;
+    }
+    return null;
 }

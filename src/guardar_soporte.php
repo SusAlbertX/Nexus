@@ -25,7 +25,7 @@ try {
     $mail->SMTPAuth   = true;
     $mail->Username   = 'nexusgamingclubsupport@gmail.com'; 
     
-    $mail->Password   = 'oepvvjlqxxibvadt'; 
+    $mail->Password   = 'TU_CONTRASEÑA_AQUI'; 
     
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
     $mail->Port       = 587;
@@ -33,8 +33,7 @@ try {
 
     $mail->setFrom('nexusgamingclubsupport@gmail.com', 'Soporte Nexus');
     $mail->addAddress('nexusgamingclubsupport@gmail.com', 'Admin Nexus');
-    $mail->addReplyTo($email, $nombre); // Si le das a "Responder", le contestas directo al usuario
-
+    $mail->addReplyTo($email, $nombre);
     $mail->isHTML(true);
     $mail->Subject = "Nuevo Ticket de Soporte: $asunto";
     $mail->Body    = "
@@ -48,10 +47,10 @@ try {
     ";
     $mail->send();
 
-    $mail->clearAddresses(); // Limpiamos las direcciones anteriores
+    $mail->clearAddresses();
     $mail->clearReplyTos();
 
-    $mail->addAddress($email, $nombre); // Ahora se lo enviamos al usuario
+    $mail->addAddress($email, $nombre);
     
     $mail->Subject = "Hemos recibido tu mensaje - Soporte Nexus";
     $mail->Body    = "
