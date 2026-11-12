@@ -14,14 +14,14 @@
         <p class="logo" onclick="location.href='index.php'">NEXUS</p>
         <nav>
             <a href="index.php">Inicio</a>
-            <a href="torneo.php">Torneos</a>
+       
+<section class="hero" style="min-height:     <a href="torneo.php">Torneos</a>
             <a href="servidores.php" class="activo">Servidores</a>
             <a href="soporte.php">Soporte</a>
         </nav>
     </div>
 </header>
-
-<section class="hero" style="min-height: 30vh;">
+ 30vh;">
     <h1>🌐 Servidores Nexus</h1>
     <p>Únete a nuestra comunidad y juega con nosotros. ¡Diviértete!</p>
 </section>

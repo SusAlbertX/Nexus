@@ -1,17 +1,8 @@
 <?php
 require 'config.php';
 
-/* ============================================================
-   CAPA DE DATOS (MOCK)
-   Cuando configures SQL, sustituye el cuerpo de cada función
-   por la consulta correspondiente. La forma del array devuelto
-   debe ser la misma que las columnas de la tabla.
-   ============================================================ */
-
 function datos_juegos(): array {
-    /* SQL futuro:
-       return getPDO()->query("SELECT * FROM juegos ORDER BY id")->fetchAll();
-    */
+
     return [
         ['id' => 1, 'slug' => 'fortnite', 'nombre' => 'Fortnite'],
         ['id' => 2, 'slug' => 'rocket',   'nombre' => 'Rocket League'],
@@ -21,14 +12,6 @@ function datos_juegos(): array {
 }
 
 function datos_torneos(?string $juegoSlug = null): array {
-    /* SQL futuro:
-       if ($juegoSlug === null || $juegoSlug === 'todos') {
-           return getPDO()->query("SELECT * FROM torneos_con_inscritos WHERE activo = 1 ORDER BY fecha_inicio ASC")->fetchAll();
-       }
-       $stmt = getPDO()->prepare("SELECT * FROM torneos_con_inscritos WHERE activo = 1 AND juego_slug = ? ORDER BY fecha_inicio ASC");
-       $stmt->execute([$juegoSlug]);
-       return $stmt->fetchAll();
-    */
     $todos = [
         [
             'id' => 1, 'juego_id' => 1, 'juego_slug' => 'fortnite', 'juego_nombre' => 'Fortnite',
@@ -71,11 +54,7 @@ function datos_torneos(?string $juegoSlug = null): array {
 }
 
 function datos_torneo(int $id): ?array {
-    /* SQL futuro:
-       $stmt = getPDO()->prepare("SELECT * FROM torneos_con_inscritos WHERE id = ?");
-       $stmt->execute([$id]);
-       return $stmt->fetch() ?: null;
-    */
+
     foreach (datos_torneos() as $t) {
         if ((int)$t['id'] === $id) return $t;
     }
