@@ -56,7 +56,6 @@ $clubs = [
             <a href="servidores.php">Servidores</a>
             <a href="soporte.php">Soporte</a>
             
-            <!-- Simulamos el estado de login -->
             <a href="#" style="color: #9b59b6; margin-left: 20px;">
                 👤 <?= $usuario_actual ?>
             </a>
