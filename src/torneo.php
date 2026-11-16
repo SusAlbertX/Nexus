@@ -21,7 +21,7 @@ $torneos = datos_torneos($filtro);
         <p class="logo" onclick="location.href='index.php'">NEXUS</p>
         <nav>
             <a href="index.php">Inicio</a>
-            <a href="torneos.php" class="activo">Torneos</a>
+            <a href="torneo.php" class="activo">Torneos</a>
             <a href="clubs.php">Clubs</a>
             <a href="soporte.php">Soporte</a>
             <a href="servidores.php" class="activo">Servidores</a>
