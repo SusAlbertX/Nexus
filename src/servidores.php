@@ -16,6 +16,7 @@
             <a href="index.php">Inicio</a>
        
 <section class="hero" style="min-height:     <a href="torneo.php">Torneos</a>
+            <a href="clubs.php">Clubs</a>
             <a href="servidores.php" class="activo">Servidores</a>
             <a href="soporte.php">Soporte</a>
         </nav>

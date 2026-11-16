@@ -22,7 +22,9 @@ $torneos = datos_torneos($filtro);
         <nav>
             <a href="index.php">Inicio</a>
             <a href="torneos.php" class="activo">Torneos</a>
+            <a href="clubs.php">Clubs</a>
             <a href="soporte.php">Soporte</a>
+            <a href="servidores.php" class="activo">Servidores</a>
         </nav>
     </div>
 </header>
