@@ -21,8 +21,8 @@ $esError = ($_GET['err'] ?? '0') === '1';
             <a href="index.php">Inicio</a>
             <a href="torneo.php">Torneos</a>
             <a href="clubs.php">Clubs</a>
-            <a href="soporte.php" class="activo">Soporte</a>Ç
             <a href="servidores.php" class="activo">Servidores</a>
+            <a href="soporte.php" class="activo">Soporte</a>Ç
         </nav>
     </div>
 </header>
