@@ -7,6 +7,11 @@ require 'PHPMailer/src/Exception.php';
 require 'PHPMailer/src/PHPMailer.php';
 require 'PHPMailer/src/SMTP.php';
 
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header("Location: recuperar.php");
+    exit;
+}
+
 $email = trim($_POST['email'] ?? '');
 
 if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -38,7 +43,7 @@ try {
     $mail->Host       = 'smtp.gmail.com';
     $mail->SMTPAuth   = true;
     $mail->Username   = 'nexusgamingclubsupport@gmail.com'; 
-    $mail->Password   = 'TU_CONTRASEÑA_DE_16_LETRAS'; AQUÍ
+    $mail->Password   = 'TU_CONTRASEÑA_DE_16_LETRAS';
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
     $mail->Port       = 587;
     $mail->CharSet    = 'UTF-8';
@@ -62,10 +67,10 @@ try {
     header("Location: recuperar.php?msg=" . urlencode('¡Te hemos enviado una nueva contraseña! Revisa tu correo.'));
     exit;
 
-} catch (Exception $e) {
-    header("Location: recuperar.php?err=" . urlencode('Error al enviar el correo. Inténtalo más tarde.'));
-    exit;
 } catch (PDOException $e) {
     header("Location: recuperar.php?err=" . urlencode('Error en la base de datos.'));
+    exit;
+} catch (Exception $e) {
+    header("Location: recuperar.php?err=" . urlencode('Error al enviar el correo. Inténtalo más tarde.'));
     exit;
 }
