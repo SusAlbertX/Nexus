@@ -20,6 +20,10 @@ $stmt = $pdo->prepare("SELECT u.id, u.nombre, m.fecha_union FROM miembros_club m
 $stmt->execute([$club['id']]);
 $miembros = $stmt->fetchAll();
 
+$stmt = $pdo->prepare("SELECT s.id, u.nombre, u.id AS usuario_id FROM solicitudes_club s JOIN usuarios u ON s.usuario_id = u.id WHERE s.club_id = ?");
+$stmt->execute([$club['id']]);
+$solicitudes = $stmt->fetchAll();
+
 $mensaje = $_GET['msg'] ?? '';
 $error = $_GET['err'] ?? '';
 $icono_actual = trim($club['icono']);
@@ -64,7 +68,35 @@ $icono_actual = trim($club['icono']);
 </section>
 
 <section class="container" style="padding: 20px;">
+    
     <?php if ($mensaje): ?><div class="alerta <?= $error ? 'error' : 'ok' ?>"><?= e($mensaje) ?></div><?php endif; ?>
+
+    <?php if (count($solicitudes) > 0): ?>
+        <div class="alerta ok" style="background: rgba(155, 89, 182, 0.1); border-color: #9b59b6; color: white; display: block; margin-bottom: 25px;">
+            <h3 style="margin-top: 0; color: #9b59b6;">🔔 Tienes <?= count($solicitudes) ?> solicitudes pendientes</h3>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+                <?php foreach ($solicitudes as $sol): ?>
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: #121212; padding: 10px 15px; border-radius: 8px; border: 1px solid #333;">
+                        <span><strong><a href="perfil.php?id=<?= $sol['usuario_id'] ?>" style="color: white; text-decoration: none;"><?= e($sol['nombre']) ?></a></strong> quiere unirse.</span>
+                        <div style="display: flex; gap: 10px;">
+                            <form action="accion_club.php" method="POST">
+                                <input type="hidden" name="accion" value="aceptar">
+                                <input type="hidden" name="club_id" value="<?= $club['id'] ?>">
+                                <input type="hidden" name="solicitud_id" value="<?= $sol['id'] ?>">
+                                <button type="submit" style="background: #2ecc71; border: none; padding: 5px 15px; font-size: 0.8em;">Aceptar</button>
+                            </form>
+                            <form action="accion_club.php" method="POST">
+                                <input type="hidden" name="accion" value="rechazar">
+                                <input type="hidden" name="club_id" value="<?= $club['id'] ?>">
+                                <input type="hidden" name="solicitud_id" value="<?= $sol['id'] ?>">
+                                <button type="submit" style="background: #e74c3c; border: none; padding: 5px 15px; font-size: 0.8em;">Rechazar</button>
+                            </form>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    <?php endif; ?>
 
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; align-items: start;">
         <div class="panel">

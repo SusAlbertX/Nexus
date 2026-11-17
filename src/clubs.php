@@ -122,7 +122,11 @@ $clubs = $pdo->query($query)->fetchAll();
                             <?php elseif ($club['total_miembros'] >= 10): ?>
                                 <button disabled style="width: 100%; background: #333; color: #777; border: none;">❌ Club Lleno</button>
                             <?php elseif ($club['es_privado']): ?>
-                                <button class="btn-outline" style="width: 100%;" onclick="alert('Este club es privado. El líder debe invitarte.')">🔒 Solicitar Invitación</button>
+                                <form action="accion_club.php" method="POST" style="width: 100%;">
+                                    <input type="hidden" name="accion" value="solicitar">
+                                    <input type="hidden" name="club_id" value="<?= $club['id'] ?>">
+                                    <button type="submit" class="btn-outline" style="width: 100%;">🔒 Solicitar Entrar</button>
+                                </form>
                             <?php else: ?>
                                 <form action="accion_club.php" method="POST" style="width: 100%;">
                                     <input type="hidden" name="accion" value="unirse">

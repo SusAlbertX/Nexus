@@ -152,4 +152,68 @@ elseif ($accion === 'expulsar') {
 else {
     header("Location: clubs.php");
     exit;
+
+    elseif ($accion === 'solicitar') {
+    $club_id = (int)$_POST['club_id'];
+    
+    try {
+        $stmt = $pdo->prepare("SELECT es_privado, (SELECT COUNT(*) FROM miembros_club WHERE club_id = clubs.id) AS total FROM clubs WHERE id = ?");
+        $stmt->execute([$club_id]);
+        $club = $stmt->fetch();
+
+        if ($club['total'] >= 10) {
+            header("Location: clubs.php?err=1&msg=" . urlencode('El club está lleno.'));
+            exit;
+        }
+        
+        $stmt = $pdo->prepare("INSERT INTO solicitudes_club (club_id, usuario_id) VALUES (?, ?)");
+        $stmt->execute([$club_id, $mi_id]);
+
+        header("Location: clubs.php?msg=" . urlencode('Solicitud enviada. El líder del club la revisará.'));
+        exit;
+    } catch (PDOException $e) {
+        header("Location: clubs.php?err=1&msg=" . urlencode('Ya has enviado una solicitud a este club.'));
+        exit;
+    }
+}
+elseif ($accion === 'aceptar') {
+    $solicitud_id = (int)$_POST['solicitud_id'];
+    $club_id = (int)$_POST['club_id'];
+
+    $stmt = $pdo->prepare("SELECT lider_id FROM clubs WHERE id = ?");
+    $stmt->execute([$club_id]);
+    if ($stmt->fetch()['lider_id'] != $mi_id) { die("No tienes permiso."); }
+
+    $stmt = $pdo->prepare("SELECT usuario_id FROM solicitudes_club WHERE id = ? AND club_id = ?");
+    $stmt->execute([$solicitud_id, $club_id]);
+    $sol = $stmt->fetch();
+
+    if ($sol) {
+        $stmt = $pdo->prepare("SELECT id FROM miembros_club WHERE usuario_id = ?");
+        $stmt->execute([$sol['usuario_id']]);
+        if (!$stmt->fetch()) {
+            $stmt = $pdo->prepare("INSERT INTO miembros_club (club_id, usuario_id) VALUES (?, ?)");
+            $stmt->execute([$club_id, $sol['usuario_id']]);
+        }
+        $stmt = $pdo->prepare("DELETE FROM solicitudes_club WHERE id = ?");
+        $stmt->execute([$solicitud_id]);
+    }
+
+    header("Location: mi_club.php?msg=" . urlencode('Jugador aceptado en el club.'));
+    exit;
+}
+elseif ($accion === 'rechazar') {
+    $solicitud_id = (int)$_POST['solicitud_id'];
+    $club_id = (int)$_POST['club_id'];
+
+    $stmt = $pdo->prepare("SELECT lider_id FROM clubs WHERE id = ?");
+    $stmt->execute([$club_id]);
+    if ($stmt->fetch()['lider_id'] != $mi_id) { die("No tienes permiso."); }
+
+    $stmt = $pdo->prepare("DELETE FROM solicitudes_club WHERE id = ? AND club_id = ?");
+    $stmt->execute([$solicitud_id, $club_id]);
+
+    header("Location: mi_club.php?msg=" . urlencode('Solicitud rechazada.'));
+    exit;
+}
 }
