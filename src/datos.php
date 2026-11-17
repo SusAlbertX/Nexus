@@ -1,8 +1,7 @@
 <?php
-require 'config.php';
+require_once 'config.php';
 
 function datos_juegos(): array {
-
     return [
         ['id' => 1, 'slug' => 'fortnite', 'nombre' => 'Fortnite'],
         ['id' => 2, 'slug' => 'rocket',   'nombre' => 'Rocket League'],
@@ -50,11 +49,15 @@ function datos_torneos(?string $juegoSlug = null): array {
     if ($juegoSlug === null || $juegoSlug === 'todos') {
         return $todos;
     }
-    return array_values(array_filter($todos, fn($t) => $t['juego_slug'] === $juegoSlug));
+
+    $filtrados = array_filter($todos, function($t) use ($juegoSlug) {
+        return $t['juego_slug'] === $juegoSlug;
+    });
+
+    return array_values($filtrados);
 }
 
 function datos_torneo(int $id): ?array {
-
     foreach (datos_torneos() as $t) {
         if ((int)$t['id'] === $id) return $t;
     }
