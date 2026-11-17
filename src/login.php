@@ -1,7 +1,7 @@
 <?php
 require_once 'config.php';
 
-¡if (isset($_SESSION['usuario_id'])) {
+if (isset($_SESSION['usuario_id'])) {
     header("Location: index.php");
     exit;
 }
@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <style>
-¡        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
         .tab-btn { flex: 1; padding: 10px; background: #2a2a2a; border: none; color: #aaa; cursor: pointer; border-radius: 8px; font-weight: bold; }
         .tab-btn.activo { background: #8e44ad; color: white; }
         .form-container { display: none; }
@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="alerta error"><?= e($error) ?></div>
         <?php endif; ?>
 
-¡        <?php if (isset($_GET['msg'])): ?>
+        <?php if (isset($_GET['msg'])): ?>
             <div class="alerta <?= isset($_GET['err']) ? 'error' : 'ok' ?>"><?= e($_GET['msg']) ?></div>
         <?php endif; ?>
 
@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button class="tab-btn" onclick="cambiarTab('registro')">Registrarse</button>
         </div>
 
-¡        <div id="form-login" class="form-container activo">
+        <div id="form-login" class="form-container activo">
             <h2 style="margin-top: 0;">Bienvenido de nuevo</h2>
             <form method="POST">
                 <input type="hidden" name="accion" value="login">
@@ -114,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="password" name="password" required placeholder="••••••••">
                 </div>
                 
-¡                <div style="text-align: right; margin-bottom: 15px;">
+                <div style="text-align: right; margin-bottom: 15px;">
                     <a href="recuperar.php" style="color: #9b59b6; font-size: 0.85em; text-decoration: none;">¿Olvidaste tu contraseña?</a>
                 </div>
 
@@ -122,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
         </div>
 
-¡        <div id="form-registro" class="form-container">
+        <div id="form-registro" class="form-container">
             <h2 style="margin-top: 0;">Crea tu cuenta</h2>
             <form method="POST">
                 <input type="hidden" name="accion" value="registro">
