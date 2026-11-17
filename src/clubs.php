@@ -85,8 +85,12 @@ $clubs = $pdo->query($query)->fetchAll();
                         <span style="position: absolute; top: 10px; right: 10px; font-size: 0.7em; padding: 4px 8px; border-radius: 10px; background: <?= $club['es_privado'] ? '#e74c3c' : '#2ecc71' ?>; color: white; font-weight: bold;">
                             <?= $club['es_privado'] ? '🔒 Privado' : '🌍 Público' ?>
                         </span>
-                        <div style="font-size: 3em; margin-bottom: 5px;"><?= e($club['icono']) ?></div>
-                        <h3 class="torneo-titulo" style="margin: 0; color: white;"><?= e($club['nombre']) ?></h3>
+                        
+                        <a href="ver_club.php?id=<?= $club['id'] ?>" style="text-decoration: none; display: block;">
+                            <div style="font-size: 3em; margin-bottom: 5px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'"><?= e($club['icono']) ?></div>
+                            <h3 class="torneo-titulo" style="margin: 0; color: white; transition: color 0.2s;" onmouseover="this.style.color='#9b59b6'" onmouseout="this.style.color='white'"><?= e($club['nombre']) ?></h3>
+                        </a>
+                        
                         <p style="color: #aaa; font-size: 0.85em; margin-top: 5px;">Líder: <a href="perfil.php?id=<?= $club['lider_id'] ?>" style="color: #9b59b6; text-decoration: none; font-weight: bold;"><?= e($club['lider_nombre']) ?></a></p>
                     </div>
                     <div class="torneo-contenido">
