@@ -26,10 +26,11 @@ $destacados = array_slice(datos_torneos(), 0, 3);
             <?php if (isset($_SESSION['usuario_id'])): ?>
                 <div class="user-menu">
                     <a>👤 <?= e($_SESSION['usuario_nombre']) ?> ▾</a>
-                    <div class="dropdown-content">
-                        <a href="ajustes.php">⚙️ Ajustes de cuenta</a>
-                        <a href="logout.php" class="logout-link">🚪 Cerrar Sesión</a>
-                    </div>
+<div class="dropdown-content">
+    <a href="perfil.php">👤 Mi Perfil</a>
+    <a href="ajustes.php">⚙️ Ajustes de cuenta</a>
+    <a href="logout.php" class="logout-link">🚪 Cerrar Sesión</a>
+</div>
                 </div>
             <?php else: ?>
                 <a href="login.php" style="margin-left: 15px;">Acceso</a>

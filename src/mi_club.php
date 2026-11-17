@@ -1,12 +1,10 @@
 <?php
 require_once 'config.php';
 
-if (!isset($_SESSION['usuario_id'])) {
-    header("Location: login.php");
-    exit;
-}
+if (!isset($_SESSION['usuario_id'])) { header("Location: login.php"); exit; }
 
 $pdo = getPDO();
+$pdo->exec("SET NAMES utf8mb4");
 $mi_id = $_SESSION['usuario_id'];
 
 $stmt = $pdo->prepare("SELECT * FROM clubs WHERE lider_id = ?");
@@ -24,7 +22,6 @@ $miembros = $stmt->fetchAll();
 
 $mensaje = $_GET['msg'] ?? '';
 $error = $_GET['err'] ?? '';
-
 $icono_actual = trim($club['icono']);
 ?>
 <!DOCTYPE html>
@@ -51,6 +48,7 @@ $icono_actual = trim($club['icono']);
                 <div class="user-menu">
                     <a>👤 <?= e($_SESSION['usuario_nombre']) ?> ▾</a>
                     <div class="dropdown-content">
+                        <a href="perfil.php">👤 Mi Perfil</a>
                         <a href="ajustes.php">⚙️ Ajustes de cuenta</a>
                         <a href="logout.php" class="logout-link">🚪 Cerrar Sesión</a>
                     </div>
@@ -106,24 +104,23 @@ $icono_actual = trim($club['icono']);
 
             <div style="margin-top: 40px; border-top: 1px solid #333; padding-top: 20px;">
                 <h3 style="color: #e74c3c;">Zona de Peligro</h3>
-                <p style="font-size: 0.9em; color: #aaa;">Si borras el club, se perderán todos los miembros y no se puede deshacer.</p>
-                <form action="accion_club.php" method="POST" onsubmit="return confirm('¿Estás completamente seguro de que quieres borrar el club? Esta acción no se puede deshacer.');">
+                <form action="accion_club.php" method="POST" onsubmit="return confirm('¿Estás completamente seguro de que quieres borrar el club?');">
                     <input type="hidden" name="accion" value="borrar">
                     <input type="hidden" name="club_id" value="<?= $club['id'] ?>">
-                    <button type="submit" style="width: 100%; background: #e74c3c; border: none;">🗑️ Borrar Club Permanentemente</button>
+                    <button type="submit" style="width: 100%; background: #e74c3c; border: none;">🗑️ Borrar Club</button>
                 </form>
             </div>
         </div>
 
         <div class="panel">
             <h2 style="margin-top: 0;">Miembros (<?= count($miembros) ?>/10)</h2>
-            <p style="color: #aaa; font-size: 0.9em;">Aquí puedes ver a los miembros de tu club. Si alguien no cumple las reglas, puedes expulsarlo.</p>
-
             <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
                 <?php foreach ($miembros as $m): ?>
                     <div style="background: #121212; padding: 15px; border-radius: 10px; border: 1px solid #333; display: flex; justify-content: space-between; align-items: center;">
                         <div>
-                            <strong style="color: white;"><?= e($m['nombre']) ?></strong>
+                            <a href="perfil.php?id=<?= $m['id'] ?>" style="color: white; text-decoration: none;">
+                                <strong><?= e($m['nombre']) ?></strong>
+                            </a>
                             <?php if ($m['id'] == $club['lider_id']): ?>
                                 <span style="background: #9b59b6; color: white; font-size: 0.7em; padding: 2px 6px; border-radius: 5px; margin-left: 10px;">LÍDER</span>
                             <?php endif; ?>

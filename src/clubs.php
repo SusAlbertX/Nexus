@@ -1,14 +1,10 @@
 <?php
 require_once 'config.php';
 
-if (!isset($_SESSION['usuario_id'])) {
-    header("Location: login.php");
-    exit;
-}
+if (!isset($_SESSION['usuario_id'])) { header("Location: login.php"); exit; }
 
 $pdo = getPDO();
 $pdo->exec("SET NAMES utf8mb4");
-
 $mi_id = $_SESSION['usuario_id'];
 $mensaje = $_GET['msg'] ?? '';
 $error = $_GET['err'] ?? '';
@@ -49,6 +45,7 @@ $clubs = $pdo->query($query)->fetchAll();
                 <div class="user-menu">
                     <a>👤 <?= e($_SESSION['usuario_nombre']) ?> ▾</a>
                     <div class="dropdown-content">
+                        <a href="perfil.php">👤 Mi Perfil</a>
                         <a href="ajustes.php">⚙️ Ajustes de cuenta</a>
                         <a href="logout.php" class="logout-link">🚪 Cerrar Sesión</a>
                     </div>
@@ -74,16 +71,12 @@ $clubs = $pdo->query($query)->fetchAll();
         <?php if ($mi_club_id == 0): ?>
             <button class="btn-primario" onclick="abrirModalCrear()">➕ Crear Nuevo Club</button>
         <?php else: ?>
-            <span style="color: #2ecc71; font-weight: bold; background: rgba(46, 204, 113, 0.1); padding: 10px 20px; border-radius: 10px; border: 1px solid #2ecc71;">
-                ✅ Ya perteneces a un club
-            </span>
+            <span style="color: #2ecc71; font-weight: bold; background: rgba(46, 204, 113, 0.1); padding: 10px 20px; border-radius: 10px; border: 1px solid #2ecc71;">✅ Ya perteneces a un club</span>
         <?php endif; ?>
     </div>
 
     <?php if (empty($clubs)): ?>
-        <div class="panel" style="text-align: center;">
-            <p>Todavía no hay clubes en Nexus. ¡Sé el primero en crear uno!</p>
-        </div>
+        <div class="panel" style="text-align: center;"><p>Todavía no hay clubes en Nexus. ¡Sé el primero en crear uno!</p></div>
     <?php else: ?>
         <div class="grid-torneos">
             <?php foreach ($clubs as $club): ?>
@@ -94,7 +87,7 @@ $clubs = $pdo->query($query)->fetchAll();
                         </span>
                         <div style="font-size: 3em; margin-bottom: 5px;"><?= e($club['icono']) ?></div>
                         <h3 class="torneo-titulo" style="margin: 0; color: white;"><?= e($club['nombre']) ?></h3>
-                        <p style="color: #aaa; font-size: 0.85em; margin-top: 5px;">Líder: <strong><?= e($club['lider_nombre']) ?></strong></p>
+                        <p style="color: #aaa; font-size: 0.85em; margin-top: 5px;">Líder: <a href="perfil.php?id=<?= $club['lider_id'] ?>" style="color: #9b59b6; text-decoration: none; font-weight: bold;"><?= e($club['lider_nombre']) ?></a></p>
                     </div>
                     <div class="torneo-contenido">
                         <p style="color: #ccc; font-size: 0.9em; min-height: 40px;"><?= e($club['descripcion']) ?></p>
