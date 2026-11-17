@@ -114,7 +114,7 @@ $clubs = $pdo->query($query)->fetchAll();
                                 <div style="display: flex; gap: 10px; width: 100%;">
                                     <button style="background: #2a2a2a; color: #9b59b6; border: 1px solid #9b59b6; flex: 1; cursor: default;">✅ Miembro</button>
                                     <?php if ($club['lider_id'] == $mi_id): ?>
-                                        <button class="btn-primario" style="flex: 1;" onclick="location.href='mi_club.php'">⚙️ Gestionar</button>
+                                        <button class="btn-primario" style="flex: 1;" onclick="location.href='mi_club.php?id=<?= $club['id'] ?>'">⚙️ Gestionar</button>
                                     <?php endif; ?>
                                 </div>
                             <?php elseif ($mi_club_id != 0): ?>
