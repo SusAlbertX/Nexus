@@ -64,11 +64,9 @@ $icono_actual = trim($club['icono']);
 </section>
 
 <section class="container" style="padding: 20px;">
-
     <?php if ($mensaje): ?><div class="alerta <?= $error ? 'error' : 'ok' ?>"><?= e($mensaje) ?></div><?php endif; ?>
 
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; align-items: start;">
-        
         <div class="panel">
             <h2 style="margin-top: 0;">Editar Club</h2>
             <form action="accion_club.php" method="POST">

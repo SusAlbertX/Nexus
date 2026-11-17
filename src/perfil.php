@@ -8,7 +8,6 @@ if (!isset($_SESSION['usuario_id'])) {
 
 $pdo = getPDO();
 $mi_id = $_SESSION['usuario_id'];
-
 $perfil_id = isset($_GET['id']) ? (int)$_GET['id'] : $mi_id;
 
 $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE id = ?");
@@ -62,11 +61,9 @@ $es_mi_perfil = ($perfil_id === $mi_id);
 
 <section class="hero" style="min-height: 25vh; background-image: linear-gradient(0deg, rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1600&q=80');">
     <h1>👤 Perfil de <?= e($usuario['nombre']) ?></h1>
-    <p>Miembro oficial de Nexus desde el <?= date('d/m/Y', strtotime($usuario['fecha_registro'])) ?></p>
 </section>
 
 <section class="container" style="padding: 20px; max-width: 900px;">
-    
     <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 25px; align-items: start;">
         
         <div class="panel" style="text-align: center;">
@@ -75,6 +72,7 @@ $es_mi_perfil = ($perfil_id === $mi_id);
             </div>
             <h2 style="margin: 0; color: white;"><?= e($usuario['nombre']) ?></h2>
             <p style="color: #777; font-size: 0.9em; margin-top: 5px;">ID: #<?= $usuario['id'] ?></p>
+            <p style="color: #9b59b6; font-size: 0.9em; font-weight: bold; margin-top: 5px;">📅 Miembro desde: <?= date('d/m/Y', strtotime($usuario['fecha_registro'])) ?></p>
             
             <?php if ($es_mi_perfil): ?>
                 <button class="btn-primario" style="width: 100%; margin-top: 20px;" onclick="location.href='ajustes.php'">⚙️ Editar mi perfil</button>
@@ -127,7 +125,6 @@ $es_mi_perfil = ($perfil_id === $mi_id);
 
         </div>
     </div>
-
 </section>
 
 <footer><div class="container"><p>&copy; Nexus 2026 - Club de Videojuegos</p></div></footer>
