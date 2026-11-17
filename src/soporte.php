@@ -1,11 +1,8 @@
-<?php
-$mensaje = $_GET['msg'] ?? '';
-$esError = ($_GET['err'] ?? '0') === '1';
-?>
+<?php require 'config.php'; ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <link rel="icon" href="icono.png" type="image/png">
+            <link rel="icon" href="icono.png" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Soporte - Nexus</title>
@@ -21,8 +18,15 @@ $esError = ($_GET['err'] ?? '0') === '1';
             <a href="index.php">Inicio</a>
             <a href="torneo.php">Torneos</a>
             <a href="clubs.php">Clubs</a>
-            <a href="servidores.php" class="activo">Servidores</a>
-            <a href="soporte.php" class="activo">Soporte</a>Ç
+            <a href="servidores.php">Servidores</a>
+            <a href="soporte.php" class="activo">Soporte</a>
+            
+            <?php if (isset($_SESSION['usuario_id'])): ?>
+                <a href="#" style="color: #9b59b6; font-weight: bold; margin-left: 15px;">👤 <?= e($_SESSION['usuario_nombre']) ?></a>
+                <a href="logout.php" style="color: #e74c3c;">Salir</a>
+            <?php else: ?>
+                <a href="login.php" style="margin-left: 15px;">Acceso</a>
+            <?php endif; ?>
         </nav>
     </div>
 </header>
@@ -36,7 +40,10 @@ $esError = ($_GET['err'] ?? '0') === '1';
     <div class="panel">
         <h2 style="margin-top:0;">📬 Envíanos un mensaje</h2>
 
-        <?php if ($mensaje): ?>
+        <?php
+        $mensaje = $_GET['msg'] ?? '';
+        $esError = ($_GET['err'] ?? '0') === '1';
+        if ($mensaje): ?>
             <div class="alerta <?= $esError ? 'error' : 'ok' ?>"><?= e($mensaje) ?></div>
         <?php endif; ?>
 

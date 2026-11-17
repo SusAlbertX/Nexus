@@ -1,5 +1,7 @@
 <?php
+require 'config.php';
 require 'datos.php';
+
 $juegos  = datos_juegos();
 $filtro  = $_GET['juego'] ?? 'todos';
 $torneos = datos_torneos($filtro);
@@ -7,7 +9,7 @@ $torneos = datos_torneos($filtro);
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <link rel="icon" href="icono.png" type="image/png">
+            <link rel="icon" href="icono.png" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Torneos - Nexus</title>
@@ -23,8 +25,15 @@ $torneos = datos_torneos($filtro);
             <a href="index.php">Inicio</a>
             <a href="torneo.php" class="activo">Torneos</a>
             <a href="clubs.php">Clubs</a>
+            <a href="servidores.php">Servidores</a>
             <a href="soporte.php">Soporte</a>
-            <a href="servidores.php" class="activo">Servidores</a>
+            
+            <?php if (isset($_SESSION['usuario_id'])): ?>
+                <a href="#" style="color: #9b59b6; font-weight: bold; margin-left: 15px;">👤 <?= e($_SESSION['usuario_nombre']) ?></a>
+                <a href="logout.php" style="color: #e74c3c;">Salir</a>
+            <?php else: ?>
+                <a href="login.php" style="margin-left: 15px;">Acceso</a>
+            <?php endif; ?>
         </nav>
     </div>
 </header>
@@ -34,12 +43,13 @@ $torneos = datos_torneos($filtro);
     <p>Inscríbete en cualquiera de nuestros torneos activos y demuestra tu nivel.</p>
 </section>
 
-<div class="filtros">
-    <a href="torneo.php?juego=todos" class="filtro-btn <?= $filtro === 'todos' ? 'activo' : '' ?>">Todos</a>
-    <?php foreach ($juegos as $j): ?>
-        <a href="torneo.php?juego=<?= e($j['slug']) ?>" class="filtro-btn <?= $filtro === $j['slug'] ? 'activo' : '' ?>"><?= e($j['nombre']) ?></a>
-    <?php endforeach; ?>
-</div>
+<section class="container" style="padding: 20px;">
+    <div class="filtros">
+        <a href="torneos.php?juego=todos" class="filtro-btn <?= $filtro === 'todos' ? 'activo' : '' ?>">Todos</a>
+        <?php foreach ($juegos as $j): ?>
+            <a href="torneos.php?juego=<?= e($j['slug']) ?>" class="filtro-btn <?= $filtro === $j['slug'] ? 'activo' : '' ?>"><?= e($j['nombre']) ?></a>
+        <?php endforeach; ?>
+    </div>
 
     <div class="grid-torneos">
         <?php if (empty($torneos)): ?>

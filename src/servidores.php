@@ -1,6 +1,8 @@
+<?php require 'config.php'; ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
+                <link rel="icon" href="icono.png" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Servidores - Nexus</title>
@@ -14,15 +16,22 @@
         <p class="logo" onclick="location.href='index.php'">NEXUS</p>
         <nav>
             <a href="index.php">Inicio</a>
-       
-<section class="hero" style="min-height:     <a href="torneo.php">Torneos</a>
+            <a href="torneo.php">Torneos</a>
             <a href="clubs.php">Clubs</a>
             <a href="servidores.php" class="activo">Servidores</a>
             <a href="soporte.php">Soporte</a>
+            
+            <?php if (isset($_SESSION['usuario_id'])): ?>
+                <a href="#" style="color: #9b59b6; font-weight: bold; margin-left: 15px;">👤 <?= e($_SESSION['usuario_nombre']) ?></a>
+                <a href="logout.php" style="color: #e74c3c;">Salir</a>
+            <?php else: ?>
+                <a href="login.php" style="margin-left: 15px;">Acceso</a>
+            <?php endif; ?>
         </nav>
     </div>
 </header>
- 30vh;">
+
+<section class="hero" style="min-height: 30vh;">
     <h1>🌐 Servidores Nexus</h1>
     <p>Únete a nuestra comunidad y juega con nosotros. ¡Diviértete!</p>
 </section>
@@ -64,7 +73,7 @@
     </div>
 
     <div class="alerta error" style="margin-top: 40px;">
-        ⚠️ <strong>Aviso importante:</strong> La IP <code>192.168.1.10</code> es una dirección de red local. Si los jugadores no están conectados a tu misma red Wi-Fi, no podrán acceder a los servidores. Para que sean públicos, necesitarás abrir los puertos en tu router.
+        ⚠️ <strong>Aviso importante:</strong> La IP <code>192.168.1.10</code> es una dirección de red local. Si los jugadores no están conectados a tu misma red Wi-Fi, no podrán acceder a los servidores.
     </div>
 
 </section>
@@ -76,13 +85,11 @@
 <script>
     function copiarIP(idElemento, boton) {
         const texto = document.getElementById(idElemento).innerText;
-        
         const tempInput = document.createElement("input");
         tempInput.value = texto;
         document.body.appendChild(tempInput);
-        
         tempInput.select();
-        tempInput.setSelectionRange(0, 99999); // Para móviles
+        tempInput.setSelectionRange(0, 99999);
         
         try {
             const exitoso = document.execCommand("copy");
@@ -90,7 +97,6 @@
                 const textoOriginal = boton.innerText;
                 boton.innerText = '✅ ¡Copiado!';
                 boton.style.background = '#2ecc71'; 
-                
                 setTimeout(() => {
                     boton.innerText = textoOriginal;
                     boton.style.background = ''; 
@@ -101,7 +107,6 @@
         } catch (err) {
             alert("Tu navegador bloqueó la copia. La IP es: " + texto);
         }
-        
         document.body.removeChild(tempInput);
     }
 </script>
