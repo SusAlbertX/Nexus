@@ -7,6 +7,7 @@ if (!isset($_SESSION['usuario_id'])) {
 }
 
 $pdo = getPDO();
+$pdo->exec("SET NAMES utf8mb4");
 $mi_id = $_SESSION['usuario_id'];
 $perfil_id = isset($_GET['id']) ? (int)$_GET['id'] : $mi_id;
 
@@ -64,12 +65,22 @@ $es_mi_perfil = ($perfil_id === $mi_id);
 </section>
 
 <section class="container" style="padding: 20px; max-width: 900px;">
+    
+    <?php if (isset($_GET['msg'])): ?>
+        <div class="alerta <?= isset($_GET['err']) ? 'error' : 'ok' ?>"><?= e($_GET['msg']) ?></div>
+    <?php endif; ?>
+
     <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 25px; align-items: start;">
         
         <div class="panel" style="text-align: center;">
-            <div style="width: 120px; height: 120px; background: linear-gradient(45deg, #8e44ad, #9b59b6); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 4em; margin: 0 auto 20px auto; border: 4px solid #2a2a2a;">
-                🎮
+            <div style="width: 120px; height: 120px; background: linear-gradient(45deg, #8e44ad, #9b59b6); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 4em; margin: 0 auto 20px auto; border: 4px solid #2a2a2a; overflow: hidden;">
+                <?php if (!empty($usuario['avatar']) && file_exists($usuario['avatar'])): ?>
+                    <img src="<?= e($usuario['avatar']) ?>" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                <?php else: ?>
+                    🎮
+                <?php endif; ?>
             </div>
+            
             <h2 style="margin: 0; color: white;"><?= e($usuario['nombre']) ?></h2>
             <p style="color: #777; font-size: 0.9em; margin-top: 5px;">ID: #<?= $usuario['id'] ?></p>
             <p style="color: #9b59b6; font-size: 0.9em; font-weight: bold; margin-top: 5px;">📅 Miembro desde: <?= date('d/m/Y', strtotime($usuario['fecha_registro'])) ?></p>
@@ -90,7 +101,11 @@ $es_mi_perfil = ($perfil_id === $mi_id);
                             <?= e($club['icono']) ?>
                         </div>
                         <div>
-                            <h4 style="margin: 0; color: white; font-size: 1.3em;"><?= e($club['nombre']) ?></h4>
+                            <h4 style="margin: 0; color: white; font-size: 1.3em;">
+                                <a href="ver_club.php?id=<?= $club['id'] ?>" style="color: white; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#9b59b6'" onmouseout="this.style.color='white'">
+                                    <?= e($club['nombre']) ?>
+                                </a>
+                            </h4>
                             <p style="margin: 5px 0 0 0; color: #aaa; font-size: 0.9em;"><?= e($club['descripcion']) ?></p>
                         </div>
                     </div>
