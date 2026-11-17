@@ -7,6 +7,8 @@ if (!isset($_SESSION['usuario_id'])) {
 }
 
 $pdo = getPDO();
+$pdo->exec("SET NAMES utf8mb4");
+
 $mi_id = $_SESSION['usuario_id'];
 $accion = $_POST['accion'] ?? '';
 

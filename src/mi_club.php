@@ -24,6 +24,8 @@ $miembros = $stmt->fetchAll();
 
 $mensaje = $_GET['msg'] ?? '';
 $error = $_GET['err'] ?? '';
+
+$icono_actual = trim($club['icono']);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -86,12 +88,12 @@ $error = $_GET['err'] ?? '';
                 <div class="form-grupo">
                     <label>Icono (Emoji)</label>
                     <select name="icono" style="font-size: 1.2em;">
-                        <option value="🛡️" <?= $club['icono'] == '🛡️' ? 'selected' : '' ?>>🛡️ Escudo</option>
-                        <option value="🎯" <?= $club['icono'] == '🎯' ? 'selected' : '' ?>>🎯 Diana</option>
-                        <option value="🔥" <?= $club['icono'] == '🔥' ? 'selected' : '' ?>>🔥 Fuego</option>
-                        <option value="👾" <?= $club['icono'] == '👾' ? 'selected' : '' ?>>👾 Alien</option>
-                        <option value="🐺" <?= $club['icono'] == '🐺' ? 'selected' : '' ?>>🐺 Lobo</option>
-                        <option value="👑" <?= $club['icono'] == '👑' ? 'selected' : '' ?>>👑 Corona</option>
+                        <option value="🛡️" <?= $icono_actual == '🛡️' ? 'selected' : '' ?>>🛡️ Escudo</option>
+                        <option value="🎯" <?= $icono_actual == '🎯' ? 'selected' : '' ?>>🎯 Diana</option>
+                        <option value="🔥" <?= $icono_actual == '🔥' ? 'selected' : '' ?>>🔥 Fuego</option>
+                        <option value="👾" <?= $icono_actual == '👾' ? 'selected' : '' ?>>👾 Alien</option>
+                        <option value="🐺" <?= $icono_actual == '🐺' ? 'selected' : '' ?>>🐺 Lobo</option>
+                        <option value="👑" <?= $icono_actual == '👑' ? 'selected' : '' ?>>👑 Corona</option>
                     </select>
                 </div>
                 <div class="form-grupo" style="flex-direction: row; align-items: center; gap: 10px;">

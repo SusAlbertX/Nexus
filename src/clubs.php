@@ -7,6 +7,8 @@ if (!isset($_SESSION['usuario_id'])) {
 }
 
 $pdo = getPDO();
+$pdo->exec("SET NAMES utf8mb4");
+
 $mi_id = $_SESSION['usuario_id'];
 $mensaje = $_GET['msg'] ?? '';
 $error = $_GET['err'] ?? '';
@@ -86,7 +88,6 @@ $clubs = $pdo->query($query)->fetchAll();
         <div class="grid-torneos">
             <?php foreach ($clubs as $club): ?>
                 <div class="torneo-card" style="border: 2px solid <?= $club['id'] == $mi_club_id ? '#9b59b6' : 'transparent' ?>;">
-                    
                     <div style="background: linear-gradient(45deg, #1a1a1a, #2a2a2a); padding: 20px; text-align: center; border-bottom: 2px solid #333; position: relative;">
                         <span style="position: absolute; top: 10px; right: 10px; font-size: 0.7em; padding: 4px 8px; border-radius: 10px; background: <?= $club['es_privado'] ? '#e74c3c' : '#2ecc71' ?>; color: white; font-weight: bold;">
                             <?= $club['es_privado'] ? '🔒 Privado' : '🌍 Público' ?>
@@ -95,10 +96,8 @@ $clubs = $pdo->query($query)->fetchAll();
                         <h3 class="torneo-titulo" style="margin: 0; color: white;"><?= e($club['nombre']) ?></h3>
                         <p style="color: #aaa; font-size: 0.85em; margin-top: 5px;">Líder: <strong><?= e($club['lider_nombre']) ?></strong></p>
                     </div>
-
                     <div class="torneo-contenido">
                         <p style="color: #ccc; font-size: 0.9em; min-height: 40px;"><?= e($club['descripcion']) ?></p>
-                        
                         <div class="torneo-stats" style="margin-top: 15px;">
                             <div class="stat-item">
                                 <div class="stat-numero"><?= $club['total_miembros'] ?>/10</div>
@@ -113,7 +112,6 @@ $clubs = $pdo->query($query)->fetchAll();
                                 <div class="stat-label">Disponibilidad</div>
                             </div>
                         </div>
-
                         <div class="torneo-acciones" style="margin-top: 15px;">
                             <?php if ($club['id'] == $mi_club_id): ?>
                                 <div style="display: flex; gap: 10px; width: 100%;">
