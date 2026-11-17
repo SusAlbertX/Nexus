@@ -7,31 +7,28 @@ $pdo = getPDO();
 $pdo->exec("SET NAMES utf8mb4");
 $mi_id = $_SESSION['usuario_id'];
 
-// Ahora cogemos el ID del club por la URL
 $club_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 if ($club_id === 0) {
-    header("Location: clubs.php?err=1&msg=" . urlencode('ID de club no válido.'));
-    exit;
+    die("<h2 style='color:red; font-family:sans-serif;'>ID de club no válido (llega 0). Revisa la URL.</h2>");
 }
 
-// Buscar el club por ID
 $stmt = $pdo->prepare("SELECT * FROM clubs WHERE id = ?");
 $stmt->execute([$club_id]);
 $club = $stmt->fetch();
 
-// Comprobar que el club existe y que el usuario es el líder
-if (!$club || $club['lider_id'] != $mi_id) {
-    header("Location: clubs.php?err=1&msg=" . urlencode('No tienes permiso para gestionar este club.'));
-    exit;
+if (!$club) {
+    die("<h2 style='color:red; font-family:sans-serif;'>El club con ID " . $club_id . " no existe en la base de datos. (Quizás lo borraste).</h2>");
 }
 
-// Obtener miembros
+if ($club['lider_id'] != $mi_id) {
+    die("<h2 style='color:red; font-family:sans-serif;'>Eres el usuario ID " . $mi_id . ", pero el líder del club es el usuario ID " . $club['lider_id'] . ". No tienes permiso.</h2>");
+}
+
 $stmt = $pdo->prepare("SELECT u.id, u.nombre, m.fecha_union FROM miembros_club m JOIN usuarios u ON m.usuario_id = u.id WHERE m.club_id = ? ORDER BY m.fecha_union ASC");
 $stmt->execute([$club['id']]);
 $miembros = $stmt->fetchAll();
 
-// Obtener solicitudes pendientes
 $stmt = $pdo->prepare("SELECT s.id, u.nombre, u.id AS usuario_id FROM solicitudes_club s JOIN usuarios u ON s.usuario_id = u.id WHERE s.club_id = ?");
 $stmt->execute([$club['id']]);
 $solicitudes = $stmt->fetchAll();
@@ -83,7 +80,6 @@ $icono_actual = trim($club['icono']);
     
     <?php if ($mensaje): ?><div class="alerta <?= $error ? 'error' : 'ok' ?>"><?= e($mensaje) ?></div><?php endif; ?>
 
-    <!-- PANEL DE SOLICITUDES -->
     <?php if (count($solicitudes) > 0): ?>
         <div class="alerta ok" style="background: rgba(155, 89, 182, 0.1); border-color: #9b59b6; color: white; display: block; margin-bottom: 25px;">
             <h3 style="margin-top: 0; color: #9b59b6;">🔔 Tienes <?= count($solicitudes) ?> solicitudes pendientes</h3>
@@ -138,7 +134,6 @@ $icono_actual = trim($club['icono']);
                     </select>
                 </div>
                 
-                <!-- SELECTOR PÚBLICO / PRIVADO -->
                 <div class="form-grupo">
                     <label>Tipo de Club</label>
                     <select name="es_privado">

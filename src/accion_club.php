@@ -141,7 +141,7 @@ elseif ($accion === 'aceptar') {
         $stmt->execute([$solicitud_id]);
     }
 
-    header("Location: mi_club.php?msg=" . urlencode('Jugador aceptado en el club.'));
+    header("Location: mi_club.php?id=" . $club_id . "&msg=" . urlencode('Jugador aceptado en el club.'));
     exit;
 }
 
@@ -157,17 +157,16 @@ elseif ($accion === 'rechazar') {
     $stmt = $pdo->prepare("DELETE FROM solicitudes_club WHERE id = ? AND club_id = ?");
     $stmt->execute([$solicitud_id, $club_id]);
 
-    header("Location: mi_club.php?msg=" . urlencode('Solicitud rechazada.'));
+    header("Location: mi_club.php?id=" . $club_id . "&msg=" . urlencode('Solicitud rechazada.'));
     exit;
 }
-
 
 elseif ($accion === 'editar') {
     $club_id = (int)$_POST['club_id'];
     $nombre = trim($_POST['nombre']);
     $descripcion = trim($_POST['descripcion']);
     $icono = $_POST['icono'];
-    $es_privado = isset($_POST['es_privado']) ? 1 : 0;
+    $es_privado = (int)($_POST['es_privado'] ?? 0);
 
     $stmt = $pdo->prepare("SELECT lider_id FROM clubs WHERE id = ?");
     $stmt->execute([$club_id]);
@@ -176,17 +175,16 @@ elseif ($accion === 'editar') {
     try {
         $stmt = $pdo->prepare("UPDATE clubs SET nombre = ?, descripcion = ?, icono = ?, es_privado = ? WHERE id = ?");
         $stmt->execute([$nombre, $descripcion, $icono, $es_privado, $club_id]);
-        header("Location: mi_club.php?msg=" . urlencode('Club actualizado correctamente.'));
+        header("Location: mi_club.php?id=" . $club_id . "&msg=" . urlencode('Club actualizado correctamente.'));
     } catch (PDOException $e) {
         if ($e->getCode() == 23000) {
-            header("Location: mi_club.php?err=1&msg=" . urlencode('Ese nombre de club ya está en uso.'));
+            header("Location: mi_club.php?id=" . $club_id . "&err=1&msg=" . urlencode('Ese nombre de club ya está en uso.'));
         } else {
-            header("Location: mi_club.php?err=1&msg=" . urlencode('Error al actualizar.'));
+            header("Location: mi_club.php?id=" . $club_id . "&err=1&msg=" . urlencode('Error al actualizar.'));
         }
     }
     exit;
 }
-
 
 elseif ($accion === 'borrar') {
     $club_id = (int)$_POST['club_id'];
@@ -195,10 +193,22 @@ elseif ($accion === 'borrar') {
     $stmt->execute([$club_id]);
     if ($stmt->fetch()['lider_id'] != $mi_id) { die("No tienes permiso."); }
 
-    $stmt = $pdo->prepare("DELETE FROM clubs WHERE id = ?");
-    $stmt->execute([$club_id]);
-    header("Location: clubs.php?msg=" . urlencode('El club ha sido eliminado.'));
-    exit;
+    try {
+        $stmt = $pdo->prepare("DELETE FROM miembros_club WHERE club_id = ?");
+        $stmt->execute([$club_id]);
+
+        $stmt = $pdo->prepare("DELETE FROM solicitudes_club WHERE club_id = ?");
+        $stmt->execute([$club_id]);
+
+        $stmt = $pdo->prepare("DELETE FROM clubs WHERE id = ?");
+        $stmt->execute([$club_id]);
+        
+        header("Location: clubs.php?msg=" . urlencode('El club ha sido eliminado y todos sus miembros liberados.'));
+        exit;
+    } catch (PDOException $e) {
+        header("Location: mi_club.php?id=" . $club_id . "&err=1&msg=" . urlencode('Error al borrar el club.'));
+        exit;
+    }
 }
 
 
@@ -212,7 +222,7 @@ elseif ($accion === 'expulsar') {
 
     $stmt = $pdo->prepare("DELETE FROM miembros_club WHERE club_id = ? AND usuario_id = ?");
     $stmt->execute([$club_id, $usuario_id]);
-    header("Location: mi_club.php?msg=" . urlencode('Miembro expulsado del club.'));
+    header("Location: mi_club.php?id=" . $club_id . "&msg=" . urlencode('Miembro expulsado del club.'));
     exit;
 }
 
