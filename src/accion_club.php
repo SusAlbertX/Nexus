@@ -10,6 +10,7 @@ $pdo = getPDO();
 $mi_id = $_SESSION['usuario_id'];
 $accion = $_POST['accion'] ?? '';
 
+
 if ($accion === 'crear') {
     $nombre = trim($_POST['nombre'] ?? '');
     $descripcion = trim($_POST['descripcion'] ?? '');
@@ -25,7 +26,7 @@ if ($accion === 'crear') {
         $stmt = $pdo->prepare("SELECT id FROM miembros_club WHERE usuario_id = ?");
         $stmt->execute([$mi_id]);
         if ($stmt->fetch()) {
-            header("Location: clubs.php?err=1&msg=" . urlencode('Ya perteneces a un club. Debes salir de él para crear otro.'));
+            header("Location: clubs.php?err=1&msg=" . urlencode('Ya perteneces a un club.'));
             exit;
         }
 
@@ -36,18 +37,20 @@ if ($accion === 'crear') {
         $stmt = $pdo->prepare("INSERT INTO miembros_club (club_id, usuario_id) VALUES (?, ?)");
         $stmt->execute([$nuevo_club_id, $mi_id]);
 
-        header("Location: clubs.php?msg=" . urlencode('¡Club creado con éxito! Ahora eres el líder.'));
+        header("Location: clubs.php?msg=" . urlencode('¡Club creado con éxito!'));
         exit;
 
     } catch (PDOException $e) {
         if ($e->getCode() == 23000) {
             header("Location: clubs.php?err=1&msg=" . urlencode('Ya existe un club con ese nombre.'));
         } else {
-            header("Location: clubs.php?err=1&msg=" . urlencode('Error al crear el club: ' . $e->getMessage()));
+            header("Location: clubs.php?err=1&msg=" . urlencode('Error al crear el club.'));
         }
         exit;
     }
 } 
+
+
 elseif ($accion === 'unirse') {
     $club_id = (int)($_POST['club_id'] ?? 0);
 
@@ -88,11 +91,9 @@ elseif ($accion === 'unirse') {
         exit;
     }
 }
-else {
-    header("Location: clubs.php");
-    exit;
 
-    elseif ($accion === 'editar') {
+
+elseif ($accion === 'editar') {
     $club_id = (int)$_POST['club_id'];
     $nombre = trim($_POST['nombre']);
     $descripcion = trim($_POST['descripcion']);
@@ -116,6 +117,8 @@ else {
     }
     exit;
 }
+
+
 elseif ($accion === 'borrar') {
     $club_id = (int)$_POST['club_id'];
 
@@ -128,6 +131,8 @@ elseif ($accion === 'borrar') {
     header("Location: clubs.php?msg=" . urlencode('El club ha sido eliminado.'));
     exit;
 }
+
+
 elseif ($accion === 'expulsar') {
     $club_id = (int)$_POST['club_id'];
     $usuario_id = (int)$_POST['usuario_id'];
@@ -141,4 +146,8 @@ elseif ($accion === 'expulsar') {
     header("Location: mi_club.php?msg=" . urlencode('Miembro expulsado del club.'));
     exit;
 }
+
+else {
+    header("Location: clubs.php");
+    exit;
 }
