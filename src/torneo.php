@@ -1,7 +1,6 @@
 <?php
-require 'config.php';
-require 'datos.php';
-
+require_once 'config.php';
+require_once 'datos.php';
 $juegos  = datos_juegos();
 $filtro  = $_GET['juego'] ?? 'todos';
 $torneos = datos_torneos($filtro);
@@ -9,15 +8,14 @@ $torneos = datos_torneos($filtro);
 <!DOCTYPE html>
 <html lang="es">
 <head>
-            <link rel="icon" href="icono.png" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Torneos - Nexus</title>
+    <link rel="icon" href="icono.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
 <header>
     <div class="container">
         <p class="logo" onclick="location.href='index.php'">NEXUS</p>
@@ -27,10 +25,14 @@ $torneos = datos_torneos($filtro);
             <a href="clubs.php">Clubs</a>
             <a href="servidores.php">Servidores</a>
             <a href="soporte.php">Soporte</a>
-            
             <?php if (isset($_SESSION['usuario_id'])): ?>
-                <a href="#" style="color: #9b59b6; font-weight: bold; margin-left: 15px;">👤 <?= e($_SESSION['usuario_nombre']) ?></a>
-                <a href="logout.php" style="color: #e74c3c;">Salir</a>
+                <div class="user-menu">
+                    <a>👤 <?= e($_SESSION['usuario_nombre']) ?> ▾</a>
+                    <div class="dropdown-content">
+                        <a href="ajustes.php">⚙️ Ajustes de cuenta</a>
+                        <a href="logout.php" class="logout-link">🚪 Cerrar Sesión</a>
+                    </div>
+                </div>
             <?php else: ?>
                 <a href="login.php" style="margin-left: 15px;">Acceso</a>
             <?php endif; ?>
@@ -45,9 +47,9 @@ $torneos = datos_torneos($filtro);
 
 <section class="container" style="padding: 20px;">
     <div class="filtros">
-        <a href="torneos.php?juego=todos" class="filtro-btn <?= $filtro === 'todos' ? 'activo' : '' ?>">Todos</a>
+        <a href="torneo.php?juego=todos" class="filtro-btn <?= $filtro === 'todos' ? 'activo' : '' ?>">Todos</a>
         <?php foreach ($juegos as $j): ?>
-            <a href="torneos.php?juego=<?= e($j['slug']) ?>" class="filtro-btn <?= $filtro === $j['slug'] ? 'activo' : '' ?>"><?= e($j['nombre']) ?></a>
+            <a href="torneo.php?juego=<?= e($j['slug']) ?>" class="filtro-btn <?= $filtro === $j['slug'] ? 'activo' : '' ?>"><?= e($j['nombre']) ?></a>
         <?php endforeach; ?>
     </div>
 
@@ -63,18 +65,9 @@ $torneos = datos_torneos($filtro);
                     <h3 class="torneo-titulo"><?= e($t['titulo']) ?></h3>
                     <div class="torneo-precio">🏆 <?= e($t['premio']) ?></div>
                     <div class="torneo-stats">
-                        <div class="stat-item">
-                            <div class="stat-numero"><?= $t['inscritos'] ?>/<?= $t['max_jugadores'] ?></div>
-                            <div class="stat-label">Jugadores</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-numero" style="font-size:0.9em;"><?= date('d/m', strtotime($t['fecha_inicio'])) ?></div>
-                            <div class="stat-label">Fecha</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-numero" style="font-size:0.8em;"><?= e($t['modalidad']) ?></div>
-                            <div class="stat-label">Formato</div>
-                        </div>
+                        <div class="stat-item"><div class="stat-numero"><?= $t['inscritos'] ?>/<?= $t['max_jugadores'] ?></div><div class="stat-label">Jugadores</div></div>
+                        <div class="stat-item"><div class="stat-numero" style="font-size:0.9em;"><?= date('d/m', strtotime($t['fecha_inicio'])) ?></div><div class="stat-label">Fecha</div></div>
+                        <div class="stat-item"><div class="stat-numero" style="font-size:0.8em;"><?= e($t['modalidad']) ?></div><div class="stat-label">Formato</div></div>
                     </div>
                     <div class="torneo-acciones">
                         <button class="btn-outline" onclick="location.href='torneo.php?id=<?= $t['id'] ?>'">Detalles</button>
@@ -87,9 +80,6 @@ $torneos = datos_torneos($filtro);
     </div>
 </section>
 
-<footer>
-    <div class="container"><p>&copy; Nexus 2026 - Club de Videojuegos</p></div>
-</footer>
-
+<footer><div class="container"><p>&copy; Nexus 2026 - Club de Videojuegos</p></div></footer>
 </body>
 </html>
