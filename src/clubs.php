@@ -72,7 +72,9 @@ $clubs = $pdo->query($query)->fetchAll();
         <?php if ($mi_club_id == 0): ?>
             <button class="btn-primario" onclick="abrirModalCrear()">➕ Crear Nuevo Club</button>
         <?php else: ?>
-            <span style="color: #2ecc71; font-weight: bold;">✅ Ya perteneces a un club</span>
+            <span style="color: #2ecc71; font-weight: bold; background: rgba(46, 204, 113, 0.1); padding: 10px 20px; border-radius: 10px; border: 1px solid #2ecc71;">
+                ✅ Ya perteneces a un club
+            </span>
         <?php endif; ?>
     </div>
 
@@ -84,6 +86,7 @@ $clubs = $pdo->query($query)->fetchAll();
         <div class="grid-torneos">
             <?php foreach ($clubs as $club): ?>
                 <div class="torneo-card" style="border: 2px solid <?= $club['id'] == $mi_club_id ? '#9b59b6' : 'transparent' ?>;">
+                    
                     <div style="background: linear-gradient(45deg, #1a1a1a, #2a2a2a); padding: 20px; text-align: center; border-bottom: 2px solid #333; position: relative;">
                         <span style="position: absolute; top: 10px; right: 10px; font-size: 0.7em; padding: 4px 8px; border-radius: 10px; background: <?= $club['es_privado'] ? '#e74c3c' : '#2ecc71' ?>; color: white; font-weight: bold;">
                             <?= $club['es_privado'] ? '🔒 Privado' : '🌍 Público' ?>
@@ -92,8 +95,10 @@ $clubs = $pdo->query($query)->fetchAll();
                         <h3 class="torneo-titulo" style="margin: 0; color: white;"><?= e($club['nombre']) ?></h3>
                         <p style="color: #aaa; font-size: 0.85em; margin-top: 5px;">Líder: <strong><?= e($club['lider_nombre']) ?></strong></p>
                     </div>
+
                     <div class="torneo-contenido">
                         <p style="color: #ccc; font-size: 0.9em; min-height: 40px;"><?= e($club['descripcion']) ?></p>
+                        
                         <div class="torneo-stats" style="margin-top: 15px;">
                             <div class="stat-item">
                                 <div class="stat-numero"><?= $club['total_miembros'] ?>/10</div>
@@ -108,9 +113,15 @@ $clubs = $pdo->query($query)->fetchAll();
                                 <div class="stat-label">Disponibilidad</div>
                             </div>
                         </div>
+
                         <div class="torneo-acciones" style="margin-top: 15px;">
                             <?php if ($club['id'] == $mi_club_id): ?>
-                                <button style="background: #2a2a2a; color: #9b59b6; border: 1px solid #9b59b6; width: 100%; cursor: default;">✅ Eres miembro</button>
+                                <div style="display: flex; gap: 10px; width: 100%;">
+                                    <button style="background: #2a2a2a; color: #9b59b6; border: 1px solid #9b59b6; flex: 1; cursor: default;">✅ Miembro</button>
+                                    <?php if ($club['lider_id'] == $mi_id): ?>
+                                        <button class="btn-primario" style="flex: 1;" onclick="location.href='mi_club.php'">⚙️ Gestionar</button>
+                                    <?php endif; ?>
+                                </div>
                             <?php elseif ($mi_club_id != 0): ?>
                                 <button disabled style="width: 100%; background: #333; color: #777; border: none;">Ya estás en otro club</button>
                             <?php elseif ($club['total_miembros'] >= 10): ?>

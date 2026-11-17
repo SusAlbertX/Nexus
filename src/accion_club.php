@@ -77,7 +77,6 @@ elseif ($accion === 'unirse') {
             exit;
         }
 
-        // Unirse
         $stmt = $pdo->prepare("INSERT INTO miembros_club (club_id, usuario_id) VALUES (?, ?)");
         $stmt->execute([$club_id, $mi_id]);
 
@@ -92,4 +91,54 @@ elseif ($accion === 'unirse') {
 else {
     header("Location: clubs.php");
     exit;
+
+    elseif ($accion === 'editar') {
+    $club_id = (int)$_POST['club_id'];
+    $nombre = trim($_POST['nombre']);
+    $descripcion = trim($_POST['descripcion']);
+    $icono = $_POST['icono'];
+    $es_privado = isset($_POST['es_privado']) ? 1 : 0;
+
+    $stmt = $pdo->prepare("SELECT lider_id FROM clubs WHERE id = ?");
+    $stmt->execute([$club_id]);
+    if ($stmt->fetch()['lider_id'] != $mi_id) { die("No tienes permiso."); }
+
+    try {
+        $stmt = $pdo->prepare("UPDATE clubs SET nombre = ?, descripcion = ?, icono = ?, es_privado = ? WHERE id = ?");
+        $stmt->execute([$nombre, $descripcion, $icono, $es_privado, $club_id]);
+        header("Location: mi_club.php?msg=" . urlencode('Club actualizado correctamente.'));
+    } catch (PDOException $e) {
+        if ($e->getCode() == 23000) {
+            header("Location: mi_club.php?err=1&msg=" . urlencode('Ese nombre de club ya está en uso.'));
+        } else {
+            header("Location: mi_club.php?err=1&msg=" . urlencode('Error al actualizar.'));
+        }
+    }
+    exit;
+}
+elseif ($accion === 'borrar') {
+    $club_id = (int)$_POST['club_id'];
+
+    $stmt = $pdo->prepare("SELECT lider_id FROM clubs WHERE id = ?");
+    $stmt->execute([$club_id]);
+    if ($stmt->fetch()['lider_id'] != $mi_id) { die("No tienes permiso."); }
+
+    $stmt = $pdo->prepare("DELETE FROM clubs WHERE id = ?");
+    $stmt->execute([$club_id]);
+    header("Location: clubs.php?msg=" . urlencode('El club ha sido eliminado.'));
+    exit;
+}
+elseif ($accion === 'expulsar') {
+    $club_id = (int)$_POST['club_id'];
+    $usuario_id = (int)$_POST['usuario_id'];
+
+    $stmt = $pdo->prepare("SELECT lider_id FROM clubs WHERE id = ?");
+    $stmt->execute([$club_id]);
+    if ($stmt->fetch()['lider_id'] != $mi_id) { die("No tienes permiso."); }
+
+    $stmt = $pdo->prepare("DELETE FROM miembros_club WHERE club_id = ? AND usuario_id = ?");
+    $stmt->execute([$club_id, $usuario_id]);
+    header("Location: mi_club.php?msg=" . urlencode('Miembro expulsado del club.'));
+    exit;
+}
 }
