@@ -1,13 +1,13 @@
 <?php
-require 'config.php';
-require 'datos.php';
+require_once 'config.php';
+require_once 'datos.php';
 
 $destacados = array_slice(datos_torneos(), 0, 3);
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
-        <link rel="icon" href="icono.png" type="image/png">
+                <link rel="icon" href="icono.png" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nexus - Club de Videojuegos</title>
@@ -72,8 +72,29 @@ $destacados = array_slice(datos_torneos(), 0, 3);
         </div>
         <?php endforeach; ?>
     </div>
-    <div style="text-align:center;">
+    <div style="text-align:center; margin-top: 20px;">
         <button onclick="location.href='torneos.php'">Ver todos los torneos →</button>
+    </div>
+</section>
+
+<section class="container" style="padding: 40px 20px;">
+    <h2 style="text-align:center;">¿Por qué unirte a Nexus?</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-top: 30px;">
+        <div class="panel" style="text-align:center;">
+            <div style="font-size: 3em;">🎯</div>
+            <h3>Torneos diarios</h3>
+            <p>Compite en torneos de tus juegos favoritos.</p>
+        </div>
+        <div class="panel" style="text-align:center;">
+            <div style="font-size: 3em;">👥</div>
+            <h3>Comunidad activa</h3>
+            <p>Conecta con otros jugadores y forma equipos.</p>
+        </div>
+        <div class="panel" style="text-align:center;">
+            <div style="font-size: 3em;">🏅</div>
+            <h3>Premios reales</h3>
+            <p>Gana skins, tarjetas regalo y hardware.</p>
+        </div>
     </div>
 </section>
 
