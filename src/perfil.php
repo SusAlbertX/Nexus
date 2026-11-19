@@ -52,6 +52,9 @@ $es_mi_perfil = ($perfil_id === $mi_id);
                     <div class="dropdown-content">
                         <a href="perfil.php">👤 Mi Perfil</a>
                         <a href="ajustes.php">⚙️ Ajustes de cuenta</a>
+                        <?php if (isset($_SESSION['usuario_nombre']) && $_SESSION['usuario_nombre'] === 'AlbertUltimate'): ?>
+    <a href="admin.php" style="color: #e74c3c !important; font-weight: bold;">👑 Panel de Admin</a>
+<?php endif; ?>
                         <a href="logout.php" class="logout-link">🚪 Cerrar Sesión</a>
                     </div>
                 </div>
