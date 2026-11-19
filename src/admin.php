@@ -111,11 +111,9 @@ $error = $_GET['err'] ?? '';
                                 <div style="color: #9b59b6; font-size: 0.8em;"><?= e($t['juego']) ?> - <?= date('d/m/Y H:i', strtotime($t['fecha_inicio'])) ?></div>
                             </div>
                             <div style="display: flex; gap: 10px;">
-                                <!-- BOTÓN EDITAR CORREGIDO (Usa htmlspecialchars y comillas simples) -->
-                                <button onclick='abrirModalEditar(<?= htmlspecialchars(json_encode($t), ENT_QUOTES, 'UTF-8') ?>)' style="background: #f39c12; border: none; padding: 5px 15px; font-size: 0.8em;">✏️ Editar</button>
+                                <a href="editar_torneo.php?id=<?= $t['id'] ?>" style="background: #f39c12; border: none; padding: 5px 15px; font-size: 0.8em; text-decoration: none; color: white; border-radius: 5px; font-weight: bold; display: inline-flex; align-items: center;">✏️ Editar</a>
                                 
-                                <!-- BOTÓN BORRAR -->
-                                <form action="accion_admin.php" method="POST" onsubmit="return confirm('¿Seguro que quieres borrar este torneo?');">
+                                <form action="accion_admin.php" method="POST" onsubmit="return confirm('¿Seguro que quieres borrar este torneo?');" style="margin: 0;">
                                     <input type="hidden" name="accion" value="borrar_torneo">
                                     <input type="hidden" name="torneo_id" value="<?= $t['id'] ?>">
                                     <button type="submit" style="background: #e74c3c; border: none; padding: 5px 15px; font-size: 0.8em;">Borrar</button>
@@ -249,92 +247,8 @@ $error = $_GET['err'] ?? '';
         </div>
     </div>
 
-    <div id="modal-editar" class="modal-overlay">
-        <div class="modal">
-            <h3 style="margin-top: 0; color: #f39c12;">✏️ Editar Torneo</h3>
-            <form action="accion_admin.php" method="POST">
-                <input type="hidden" name="accion" value="editar_torneo">
-                <input type="hidden" name="torneo_id" id="edit-id">
-                
-                <div class="form-grupo">
-                    <label>Título del Torneo</label>
-                    <input type="text" name="titulo" id="edit-titulo" required>
-                </div>
-                <div class="form-grupo">
-                    <label>Juego</label>
-                    <select name="juego" id="edit-juego" required>
-                        <option value="fortnite">Fortnite</option>
-                        <option value="rocket">Rocket League</option>
-                        <option value="cod">Call of Duty</option>
-                        <option value="cs2">CS2</option>
-                    </select>
-                </div>
-                <div class="form-grupo">
-                    <label>Premio</label>
-                    <input type="text" name="premio" id="edit-premio" required>
-                </div>
-                <div class="form-grupo">
-                    <label>Máximo de Jugadores</label>
-                    <input type="number" name="max_jugadores" id="edit-max" required min="2">
-                </div>
-                <div class="form-grupo">
-                    <label>Fecha y Hora de Inicio</label>
-                    <input type="datetime-local" name="fecha_inicio" id="edit-fecha" required>
-                </div>
-                <div class="form-grupo">
-                    <label>Imagen del Torneo (URL)</label>
-                    <input type="url" name="imagen" id="edit-imagen">
-                </div>
-                <div class="form-grupo">
-                    <label>Descripción</label>
-                    <textarea name="descripcion" id="edit-descripcion" rows="3"></textarea>
-                </div>
-                
-                <div class="modal-buttons">
-                    <button type="button" class="modal-btn cancel" onclick="cerrarModalEditar()">Cancelar</button>
-                    <button type="submit" class="modal-btn confirm" style="background: #f39c12;">Guardar Cambios</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
 </section>
 
 <footer><div class="container"><p>&copy; Nexus 2026 - Admin</p></div></footer>
-
-<script>
-    function abrirModalEditar(torneo) {
-        try {
-            document.getElementById('edit-id').value = torneo.id;
-            document.getElementById('edit-titulo').value = torneo.titulo;
-            document.getElementById('edit-juego').value = torneo.juego;
-            document.getElementById('edit-premio').value = torneo.premio;
-            document.getElementById('edit-max').value = torneo.max_jugadores;
-            document.getElementById('edit-imagen').value = torneo.imagen;
-            document.getElementById('edit-descripcion').value = torneo.descripcion;
-            
-            let fechaFormateada = torneo.fecha_inicio.replace(' ', 'T');
-            document.getElementById('edit-fecha').value = fechaFormateada;
-
-            document.getElementById('modal-editar').style.display = 'flex';
-            document.body.classList.add('modal-abierto');
-        } catch (error) {
-            console.error("Error al abrir el modal:", error);
-            alert("Hubo un error al cargar los datos. Revisa la consola.");
-        }
-    }
-    
-    function cerrarModalEditar() {
-        document.getElementById('modal-editar').style.display = 'none';
-        document.body.classList.remove('modal-abierto');
-    }
-
-    document.getElementById('modal-editar').addEventListener('click', function(e) {
-        if (e.target === this) {
-            cerrarModalEditar();
-        }
-    });
-</script>
-
 </body>
 </html>
