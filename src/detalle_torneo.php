@@ -75,9 +75,13 @@ if (isset($_SESSION['usuario_id'])) {
     </div>
 </header>
 
-<section class="hero" style="min-height: 30vh;">
+<section class="hero" style="min-height: 30vh; flex-direction: column;">
     <h1><?= e($torneo['titulo']) ?></h1>
     <p><?= strtoupper(e($torneo['juego'])) ?> · <?= date('d/m/Y H:i', strtotime($torneo['fecha_inicio'])) ?></p>
+    
+    <div id="countdown" style="margin-top: 20px; font-size: 1.5em; font-weight: bold; color: #2ecc71; background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 10px; border: 1px solid #2ecc71; display: inline-block;">
+        Calculando tiempo...
+    </div>
 </section>
 
 <section class="container" style="padding: 20px; display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px;">
@@ -122,7 +126,6 @@ if (isset($_SESSION['usuario_id'])) {
                 <p id="texto-explicativo" style="color: #aaa; font-size: 0.85em; margin-bottom: 20px; text-align: center;">Apúntate a ti mismo a este torneo (Modo Individual).</p>
             <?php endif; ?>
 
-            <!-- PESTAÑA SOLO -->
             <div id="form-solo" style="display: block;">
                 <?php if ($ya_inscrito_solo): ?>
                     <div class="alerta ok" style="margin-bottom: 15px;">¡Ya estás inscrito en este torneo!</div>
@@ -140,7 +143,6 @@ if (isset($_SESSION['usuario_id'])) {
                 <?php endif; ?>
             </div>
 
-            <!-- PESTAÑA CLUB -->
             <?php if ($mi_club_lider): ?>
             <div id="form-club" style="display: none;">
                 <?php if ($club_inscrito): ?>
@@ -203,6 +205,29 @@ if (isset($_SESSION['usuario_id'])) {
 <footer><div class="container"><p>&copy; Nexus 2026 - Club de Videojuegos</p></div></footer>
 
 <script>
+    const fechaTorneo = new Date("<?= date('Y-m-d\TH:i:s', strtotime($torneo['fecha_inicio'])) ?>").getTime();
+
+    const intervalo = setInterval(function() {
+        const ahora = new Date().getTime();
+        const distancia = fechaTorneo - ahora;
+
+        if (distancia < 0) {
+            clearInterval(intervalo);
+            document.getElementById("countdown").innerHTML = "🔴 ¡EL TORNEO HA COMENZADO!";
+            document.getElementById("countdown").style.color = "#e74c3c";
+            document.getElementById("countdown").style.borderColor = "#e74c3c";
+            return;
+        }
+
+        const dias = Math.floor(distancia / (1000 * 60 * 60 * 24));
+        const horas = Math.floor((distancia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutos = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
+        const segundos = Math.floor((distancia % (1000 * 60)) / 1000);
+
+        document.getElementById("countdown").innerHTML = 
+            `⏱️ Faltan: ${dias}d ${horas}h ${minutos}m ${segundos}s`;
+    }, 1000);
+
     function cambiarTabInscripcion(tab) {
         document.getElementById('form-solo').style.display = 'none';
         if(document.getElementById('form-club')) document.getElementById('form-club').style.display = 'none';

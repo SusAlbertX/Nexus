@@ -1,9 +1,26 @@
 <?php
 require_once 'config.php';
 require_once 'datos.php';
+
 $juegos  = datos_juegos();
 $filtro  = $_GET['juego'] ?? 'todos';
-$torneos = datos_torneos($filtro);
+$mis_torneos = isset($_GET['mis_torneos']) ? true : false;
+
+$pdo = getPDO();
+
+if ($mis_torneos && isset($_SESSION['usuario_id'])) {
+    $stmt = $pdo->prepare("SELECT t.*, 
+        (SELECT COUNT(*) FROM inscripciones_torneo i WHERE i.torneo_id = t.id) AS inscritos 
+        FROM torneos t 
+        JOIN inscripciones_torneo i ON t.id = i.torneo_id 
+        WHERE i.usuario_id = ? OR i.club_id = (SELECT club_id FROM miembros_club WHERE usuario_id = ?)
+        GROUP BY t.id 
+        ORDER BY t.fecha_inicio ASC");
+    $stmt->execute([$_SESSION['usuario_id'], $_SESSION['usuario_id']]);
+    $torneos = $stmt->fetchAll();
+} else {
+    $torneos = datos_torneos($filtro);
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -48,16 +65,24 @@ $torneos = datos_torneos($filtro);
 </section>
 
 <section class="container" style="padding: 20px;">
-    <div class="filtros">
-        <a href="torneo.php?juego=todos" class="filtro-btn <?= $filtro === 'todos' ? 'activo' : '' ?>">Todos</a>
+    <div class="filtros" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+        <a href="torneo.php?juego=todos" class="filtro-btn <?= ($filtro === 'todos' && !$mis_torneos) ? 'activo' : '' ?>">Todos</a>
         <?php foreach ($juegos as $j): ?>
-            <a href="torneo.php?juego=<?= e($j['slug']) ?>" class="filtro-btn <?= $filtro === $j['slug'] ? 'activo' : '' ?>"><?= e($j['nombre']) ?></a>
+            <a href="torneo.php?juego=<?= e($j['slug']) ?>" class="filtro-btn <?= ($filtro === $j['slug'] && !$mis_torneos) ? 'activo' : '' ?>"><?= e($j['nombre']) ?></a>
         <?php endforeach; ?>
+        
+        <?php if (isset($_SESSION['usuario_id'])): ?>
+            <a href="torneo.php?mis_torneos=1" class="filtro-btn <?= $mis_torneos ? 'activo' : '' ?>" style="border-color: #2ecc71; color: #2ecc71; margin-left: auto;">
+                🎯 Mis Torneos
+            </a>
+        <?php endif; ?>
     </div>
 
     <div class="grid-torneos">
         <?php if (empty($torneos)): ?>
-            <p style="grid-column:1/-1; text-align:center; color:#888;">No hay torneos en esta categoría.</p>
+            <p style="grid-column:1/-1; text-align:center; color:#888;">
+                <?= $mis_torneos ? 'No estás inscrito en ningún torneo todavía.' : 'No hay torneos en esta categoría.' ?>
+            </p>
         <?php else: ?>
             <?php foreach ($torneos as $t): ?>
             <div class="torneo-card">
