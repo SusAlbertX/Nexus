@@ -35,6 +35,8 @@ $destacados = array_slice(datos_torneos(), 0, 3);
                         <a href="logout.php" class="logout-link">🚪 Cerrar Sesión</a>
                     </div>
                 </div>
+            <?php else: ?>
+                <a href="login.php" style="margin-left: 15px;">Acceso</a>
             <?php endif; ?>
         </nav>
     </div>
