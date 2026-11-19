@@ -43,6 +43,25 @@ elseif ($accion === 'borrar_torneo') {
     header("Location: admin.php?msg=" . urlencode('Torneo eliminado.'));
     exit;
 }
+elseif ($accion === 'editar_torneo') {
+    $torneo_id = (int)$_POST['torneo_id'];
+    $titulo = trim($_POST['titulo']);
+    $juego = $_POST['juego'];
+    $premio = trim($_POST['premio']);
+    $max_jugadores = (int)$_POST['max_jugadores'];
+    $fecha_inicio = str_replace('T', ' ', $_POST['fecha_inicio']); // Convertimos el formato HTML al de SQL
+    $imagen = trim($_POST['imagen']);
+    $descripcion = trim($_POST['descripcion']);
+
+    try {
+        $stmt = $pdo->prepare("UPDATE torneos SET titulo = ?, juego = ?, premio = ?, max_jugadores = ?, fecha_inicio = ?, imagen = ?, descripcion = ? WHERE id = ?");
+        $stmt->execute([$titulo, $juego, $premio, $max_jugadores, $fecha_inicio, $imagen, $descripcion, $torneo_id]);
+        header("Location: admin.php?msg=" . urlencode('Torneo actualizado correctamente.'));
+    } catch (PDOException $e) {
+        header("Location: admin.php?err=1&msg=" . urlencode('Error al actualizar el torneo.'));
+    }
+    exit;
+}
 elseif ($accion === 'banear') {
     $usuario_id = (int)$_POST['usuario_id'];
     $estado_actual = (int)$_POST['baneado_actual'];
