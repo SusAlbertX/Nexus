@@ -81,8 +81,8 @@ $torneos = datos_torneos($filtro);
                         </div>
                     </div>
                     <div class="torneo-acciones">
-                        <button class="btn-outline" onclick="location.href='torneo.php?id=<?= $t['id'] ?>'">Detalles</button>
-                        <button onclick="location.href='torneo.php?id=<?= $t['id'] ?>#inscribirse'">Inscribirse</button>
+                        <button class="btn-outline" onclick="location.href='detalle_torneo.php?id=<?= $t['id'] ?>'">Detalles</button>
+                        <button onclick="location.href='detalle_torneo.php?id=<?= $t['id'] ?>#inscribirse'">Inscribirse</button>
                     </div>
                 </div>
             </div>
