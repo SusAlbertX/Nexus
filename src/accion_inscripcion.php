@@ -35,6 +35,7 @@ try {
         exit;
     }
 
+    elseif ($modo === 'club' && $club_id) {
         $stmt = $pdo->prepare("SELECT lider_id FROM clubs WHERE id = ?");
         $stmt->execute([$club_id]);
         $club = $stmt->fetch();
@@ -60,7 +61,6 @@ try {
                 $stmt->execute([$torneo_id, $m['usuario_id'], $club_id]);
                 $inscritos_con_exito++;
             } catch (PDOException $e) {
-                // Si ya estaba inscrito, lo ignoramos y seguimos con el siguiente
                 if ($e->getCode() != 23000) {
                     throw $e;
                 }
