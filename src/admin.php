@@ -111,8 +111,8 @@ $error = $_GET['err'] ?? '';
                                 <div style="color: #9b59b6; font-size: 0.8em;"><?= e($t['juego']) ?> - <?= date('d/m/Y H:i', strtotime($t['fecha_inicio'])) ?></div>
                             </div>
                             <div style="display: flex; gap: 10px;">
-                                <!-- BOTÓN EDITAR -->
-                                <button onclick='abrirModalEditar(<?= json_encode($t) ?>)' style="background: #f39c12; border: none; padding: 5px 15px; font-size: 0.8em;">✏️ Editar</button>
+                                <!-- BOTÓN EDITAR CORREGIDO (Usa htmlspecialchars y comillas simples) -->
+                                <button onclick='abrirModalEditar(<?= htmlspecialchars(json_encode($t), ENT_QUOTES, 'UTF-8') ?>)' style="background: #f39c12; border: none; padding: 5px 15px; font-size: 0.8em;">✏️ Editar</button>
                                 
                                 <!-- BOTÓN BORRAR -->
                                 <form action="accion_admin.php" method="POST" onsubmit="return confirm('¿Seguro que quieres borrar este torneo?');">
@@ -185,7 +185,6 @@ $error = $_GET['err'] ?? '';
                                 </form>
                             </div>
                             
-                            <!-- Miembros del club -->
                             <div style="display: flex; flex-wrap: wrap; gap: 10px;">
                                 <?php
                                 $stmt_m = $pdo->prepare("SELECT u.id, u.nombre FROM miembros_club m JOIN usuarios u ON m.usuario_id = u.id WHERE m.club_id = ?");
@@ -305,26 +304,36 @@ $error = $_GET['err'] ?? '';
 
 <script>
     function abrirModalEditar(torneo) {
-        document.getElementById('edit-id').value = torneo.id;
-        document.getElementById('edit-titulo').value = torneo.titulo;
-        document.getElementById('edit-juego').value = torneo.juego;
-        document.getElementById('edit-premio').value = torneo.premio;
-        document.getElementById('edit-max').value = torneo.max_jugadores;
-        document.getElementById('edit-imagen').value = torneo.imagen;
-        document.getElementById('edit-descripcion').value = torneo.descripcion;
-        
-        // Formatear la fecha para el input (reemplazamos el espacio por una 'T')
-        let fechaFormateada = torneo.fecha_inicio.replace(' ', 'T');
-        document.getElementById('edit-fecha').value = fechaFormateada;
+        try {
+            document.getElementById('edit-id').value = torneo.id;
+            document.getElementById('edit-titulo').value = torneo.titulo;
+            document.getElementById('edit-juego').value = torneo.juego;
+            document.getElementById('edit-premio').value = torneo.premio;
+            document.getElementById('edit-max').value = torneo.max_jugadores;
+            document.getElementById('edit-imagen').value = torneo.imagen;
+            document.getElementById('edit-descripcion').value = torneo.descripcion;
+            
+            let fechaFormateada = torneo.fecha_inicio.replace(' ', 'T');
+            document.getElementById('edit-fecha').value = fechaFormateada;
 
-        document.getElementById('modal-editar').style.display = 'flex';
-        document.body.classList.add('modal-abierto');
+            document.getElementById('modal-editar').style.display = 'flex';
+            document.body.classList.add('modal-abierto');
+        } catch (error) {
+            console.error("Error al abrir el modal:", error);
+            alert("Hubo un error al cargar los datos. Revisa la consola.");
+        }
     }
     
     function cerrarModalEditar() {
         document.getElementById('modal-editar').style.display = 'none';
         document.body.classList.remove('modal-abierto');
     }
+
+    document.getElementById('modal-editar').addEventListener('click', function(e) {
+        if (e.target === this) {
+            cerrarModalEditar();
+        }
+    });
 </script>
 
 </body>
