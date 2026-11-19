@@ -43,11 +43,7 @@ elseif ($accion === 'borrar_torneo') {
     header("Location: admin.php?msg=" . urlencode('Torneo eliminado.'));
     exit;
 }
-else {
-    header("Location: admin.php");
-    exit;
-
-    elseif ($accion === 'banear') {
+elseif ($accion === 'banear') {
     $usuario_id = (int)$_POST['usuario_id'];
     $estado_actual = (int)$_POST['baneado_actual'];
     $nuevo_estado = $estado_actual === 1 ? 0 : 1;
@@ -82,4 +78,7 @@ elseif ($accion === 'expulsar_admin') {
     header("Location: admin.php?msg=" . urlencode('Usuario expulsado del club.'));
     exit;
 }
+else {
+    header("Location: admin.php");
+    exit;
 }
