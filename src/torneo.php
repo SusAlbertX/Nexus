@@ -28,17 +28,15 @@ $torneos = datos_torneos($filtro);
             <?php if (isset($_SESSION['usuario_id'])): ?>
                 <div class="user-menu">
                     <a>👤 <?= e($_SESSION['usuario_nombre']) ?> ▾</a>
-<div class="dropdown-content">
-    <a href="perfil.php">👤 Mi Perfil</a>
-    <a href="ajustes.php">⚙️ Ajustes de cuenta</a>
-    <?php if (isset($_SESSION['usuario_nombre']) && $_SESSION['usuario_nombre'] === 'AlbertUltimate'): ?>
-    <a href="admin.php" style="color: #e74c3c !important; font-weight: bold;">👑 Panel de Admin</a>
-<?php endif; ?>
-    <a href="logout.php" class="logout-link">🚪 Cerrar Sesión</a>
-</div>
+                    <div class="dropdown-content">
+                        <a href="perfil.php">👤 Mi Perfil</a>
+                        <a href="ajustes.php">⚙️ Ajustes de cuenta</a>
+                        <?php if (isset($_SESSION['usuario_nombre']) && $_SESSION['usuario_nombre'] === 'AlbertUltimate'): ?>
+                            <a href="admin.php" style="color: #e74c3c !important; font-weight: bold;">👑 Panel de Admin</a>
+                        <?php endif; ?>
+                        <a href="logout.php" class="logout-link">🚪 Cerrar Sesión</a>
+                    </div>
                 </div>
-            <?php else: ?>
-                <a href="login.php" style="margin-left: 15px;">Acceso</a>
             <?php endif; ?>
         </nav>
     </div>
@@ -63,15 +61,24 @@ $torneos = datos_torneos($filtro);
         <?php else: ?>
             <?php foreach ($torneos as $t): ?>
             <div class="torneo-card">
-                <img class="torneo-imagen" src="<?= e($t['imagen']) ?>" alt="<?= e($t['titulo']) ?>" onerror="this.style.display='none'">
+                <img class="torneo-imagen" src="<?= $t['imagen'] ? e($t['imagen']) : 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80' ?>" alt="<?= e($t['titulo']) ?>">
                 <div class="torneo-contenido">
-                    <span class="categoria cat-<?= e($t['juego_slug']) ?>"><?= e($t['juego_nombre']) ?></span>
+                    <span class="categoria cat-<?= e($t['juego']) ?>"><?= strtoupper(e($t['juego'])) ?></span>
                     <h3 class="torneo-titulo"><?= e($t['titulo']) ?></h3>
                     <div class="torneo-precio">🏆 <?= e($t['premio']) ?></div>
                     <div class="torneo-stats">
-                        <div class="stat-item"><div class="stat-numero"><?= $t['inscritos'] ?>/<?= $t['max_jugadores'] ?></div><div class="stat-label">Jugadores</div></div>
-                        <div class="stat-item"><div class="stat-numero" style="font-size:0.9em;"><?= date('d/m', strtotime($t['fecha_inicio'])) ?></div><div class="stat-label">Fecha</div></div>
-                        <div class="stat-item"><div class="stat-numero" style="font-size:0.8em;"><?= e($t['modalidad']) ?></div><div class="stat-label">Formato</div></div>
+                        <div class="stat-item">
+                            <div class="stat-numero"><?= $t['inscritos'] ?>/<?= $t['max_jugadores'] ?></div>
+                            <div class="stat-label">Jugadores</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-numero" style="font-size:0.9em;"><?= date('d/m', strtotime($t['fecha_inicio'])) ?></div>
+                            <div class="stat-label">Fecha</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-numero" style="font-size:0.8em;"><?= e($t['juego']) ?></div>
+                            <div class="stat-label">Formato</div>
+                        </div>
                     </div>
                     <div class="torneo-acciones">
                         <button class="btn-outline" onclick="location.href='torneo.php?id=<?= $t['id'] ?>'">Detalles</button>

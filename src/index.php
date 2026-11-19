@@ -26,17 +26,15 @@ $destacados = array_slice(datos_torneos(), 0, 3);
             <?php if (isset($_SESSION['usuario_id'])): ?>
                 <div class="user-menu">
                     <a>👤 <?= e($_SESSION['usuario_nombre']) ?> ▾</a>
-<div class="dropdown-content">
-    <a href="perfil.php">👤 Mi Perfil</a>
-    <a href="ajustes.php">⚙️ Ajustes de cuenta</a>
-    <?php if (isset($_SESSION['usuario_nombre']) && $_SESSION['usuario_nombre'] === 'AlbertUltimate'): ?>
-    <a href="admin.php" style="color: #e74c3c !important; font-weight: bold;">👑 Panel de Admin</a>
-<?php endif; ?>
-    <a href="logout.php" class="logout-link">🚪 Cerrar Sesión</a>
-</div>
+                    <div class="dropdown-content">
+                        <a href="perfil.php">👤 Mi Perfil</a>
+                        <a href="ajustes.php">⚙️ Ajustes de cuenta</a>
+                        <?php if (isset($_SESSION['usuario_nombre']) && $_SESSION['usuario_nombre'] === 'AlbertUltimate'): ?>
+                            <a href="admin.php" style="color: #e74c3c !important; font-weight: bold;">👑 Panel de Admin</a>
+                        <?php endif; ?>
+                        <a href="logout.php" class="logout-link">🚪 Cerrar Sesión</a>
+                    </div>
                 </div>
-            <?php else: ?>
-                <a href="login.php" style="margin-left: 15px;">Acceso</a>
             <?php endif; ?>
         </nav>
     </div>
@@ -54,23 +52,33 @@ $destacados = array_slice(datos_torneos(), 0, 3);
 <section class="container" style="padding: 40px 20px;">
     <h2 style="text-align:center;">🏆 Torneos destacados</h2>
     <div class="grid-torneos">
-        <?php foreach ($destacados as $t): ?>
-        <div class="torneo-card">
-            <img class="torneo-imagen" src="<?= e($t['imagen']) ?>" alt="<?= e($t['titulo']) ?>" onerror="this.style.display='none'">
-            <div class="torneo-contenido">
-                <span class="categoria cat-<?= e($t['juego_slug']) ?>"><?= e($t['juego_nombre']) ?></span>
-                <h3 class="torneo-titulo"><?= e($t['titulo']) ?></h3>
-                <div class="torneo-precio">🏆 Premio: <?= e($t['premio']) ?></div>
-                <div class="torneo-stats">
-                    <div class="stat-item"><div class="stat-numero"><?= $t['inscritos'] ?>/<?= $t['max_jugadores'] ?></div><div class="stat-label">Jugadores</div></div>
-                    <div class="stat-item"><div class="stat-numero" style="font-size:0.9em;"><?= date('d/m', strtotime($t['fecha_inicio'])) ?></div><div class="stat-label">Fecha</div></div>
-                </div>
-                <div class="torneo-acciones">
-                    <button onclick="location.href='torneo.php?id=<?= $t['id'] ?>'">Ver torneo</button>
+        <?php if (empty($destacados)): ?>
+            <p style="grid-column:1/-1; text-align:center; color:#888;">El administrador aún no ha creado ningún torneo.</p>
+        <?php else: ?>
+            <?php foreach ($destacados as $t): ?>
+            <div class="torneo-card">
+                <img class="torneo-imagen" src="<?= $t['imagen'] ? e($t['imagen']) : 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80' ?>" alt="<?= e($t['titulo']) ?>">
+                <div class="torneo-contenido">
+                    <span class="categoria cat-<?= e($t['juego']) ?>"><?= strtoupper(e($t['juego'])) ?></span>
+                    <h3 class="torneo-titulo"><?= e($t['titulo']) ?></h3>
+                    <div class="torneo-precio">🏆 Premio: <?= e($t['premio']) ?></div>
+                    <div class="torneo-stats">
+                        <div class="stat-item">
+                            <div class="stat-numero"><?= $t['inscritos'] ?>/<?= $t['max_jugadores'] ?></div>
+                            <div class="stat-label">Jugadores</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-numero" style="font-size:0.9em;"><?= date('d/m', strtotime($t['fecha_inicio'])) ?></div>
+                            <div class="stat-label">Fecha</div>
+                        </div>
+                    </div>
+                    <div class="torneo-acciones">
+                        <button onclick="location.href='torneo.php?id=<?= $t['id'] ?>'">Ver torneo</button>
+                    </div>
                 </div>
             </div>
-        </div>
-        <?php endforeach; ?>
+            <?php endforeach; ?>
+        <?php endif; ?>
     </div>
     <div style="text-align:center; margin-top: 20px;">
         <button onclick="location.href='torneo.php'">Ver todos los torneos →</button>
