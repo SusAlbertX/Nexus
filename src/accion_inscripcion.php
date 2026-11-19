@@ -56,6 +56,13 @@ try {
             exit;
         }
 
+        $stmt = $pdo->prepare("SELECT id FROM inscripciones_torneo WHERE torneo_id = ? AND club_id = ? LIMIT 1");
+        $stmt->execute([$torneo_id, $club_id]);
+        if ($stmt->fetch()) {
+            header("Location: detalle_torneo.php?id=$torneo_id&err=1&msg=" . urlencode('Tu club ya está inscrito en este torneo.'));
+            exit;
+        }
+
         $stmt = $pdo->prepare("SELECT usuario_id FROM miembros_club WHERE club_id = ?");
         $stmt->execute([$club_id]);
         $miembros = $stmt->fetchAll();
@@ -87,6 +94,28 @@ try {
         }
 
         header("Location: detalle_torneo.php?id=$torneo_id&msg=" . urlencode("¡Club inscrito! Se han apuntado $inscritos_con_exito miembros."));
+        exit;
+    }
+
+    elseif ($modo === 'desapuntar_solo') {
+        $stmt = $pdo->prepare("DELETE FROM inscripciones_torneo WHERE torneo_id = ? AND usuario_id = ?");
+        $stmt->execute([$torneo_id, $usuario_id]);
+        header("Location: detalle_torneo.php?id=$torneo_id&msg=" . urlencode('Te has retirado del torneo.'));
+        exit;
+    }
+
+    elseif ($modo === 'desapuntar_club' && $club_id) {
+        $stmt = $pdo->prepare("SELECT lider_id FROM clubs WHERE id = ?");
+        $stmt->execute([$club_id]);
+        $club = $stmt->fetch();
+        
+        if ($club && $club['lider_id'] == $usuario_id) {
+            $stmt = $pdo->prepare("DELETE FROM inscripciones_torneo WHERE torneo_id = ? AND club_id = ?");
+            $stmt->execute([$torneo_id, $club_id]);
+            header("Location: detalle_torneo.php?id=$torneo_id&msg=" . urlencode('Tu club ha sido retirado del torneo.'));
+        } else {
+            header("Location: detalle_torneo.php?id=$torneo_id&err=1&msg=" . urlencode('No tienes permiso.'));
+        }
         exit;
     }
 

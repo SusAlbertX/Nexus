@@ -16,6 +16,27 @@ if (!$torneo) {
 
 $mensaje = $_GET['msg'] ?? '';
 $error = $_GET['err'] ?? '';
+$pdo = getPDO();
+
+$ya_inscrito_solo = false;
+$club_inscrito = false;
+$mi_club_lider = null;
+
+if (isset($_SESSION['usuario_id'])) {
+    $stmt = $pdo->prepare("SELECT id FROM inscripciones_torneo WHERE torneo_id = ? AND usuario_id = ?");
+    $stmt->execute([$id, $_SESSION['usuario_id']]);
+    if ($stmt->fetch()) { $ya_inscrito_solo = true; }
+
+    $stmt = $pdo->prepare("SELECT c.id, c.nombre FROM clubs c WHERE c.lider_id = ?");
+    $stmt->execute([$_SESSION['usuario_id']]);
+    $mi_club_lider = $stmt->fetch();
+
+    if ($mi_club_lider) {
+        $stmt = $pdo->prepare("SELECT id FROM inscripciones_torneo WHERE torneo_id = ? AND club_id = ? LIMIT 1");
+        $stmt->execute([$id, $mi_club_lider['id']]);
+        if ($stmt->fetch()) { $club_inscrito = true; }
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -86,52 +107,61 @@ $error = $_GET['err'] ?? '';
             <div class="alerta <?= $error ? 'error' : 'ok' ?>"><?= e($mensaje) ?></div>
         <?php endif; ?>
 
-        <?php if ($torneo['inscritos'] >= $torneo['max_jugadores']): ?>
+        <?php if (!isset($_SESSION['usuario_id'])): ?>
+            <div class="alerta error">Debes iniciar sesión para inscribirte.</div>
+            <button class="btn-primario" style="width: 100%;" onclick="location.href='login.php'">Iniciar Sesión</button>
+        <?php elseif ($torneo['inscritos'] >= $torneo['max_jugadores'] && !$ya_inscrito_solo && !$club_inscrito): ?>
             <div class="alerta error">Este torneo ya está lleno.</div>
         <?php else: ?>
-            <?php if (!isset($_SESSION['usuario_id'])): ?>
-                <div class="alerta error">Debes iniciar sesión para inscribirte.</div>
-                <button class="btn-primario" style="width: 100%;" onclick="location.href='login.php'">Iniciar Sesión</button>
-            <?php else: ?>
-                
-                <?php 
-                $pdo = getPDO();
-                $stmt = $pdo->prepare("SELECT c.id, c.nombre FROM clubs c WHERE c.lider_id = ?");
-                $stmt->execute([$_SESSION['usuario_id']]);
-                $mi_club_lider = $stmt->fetch();
-                ?>
+            
+            <?php if ($mi_club_lider): ?>
+                <div class="tabs" style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <button class="tab-btn" id="btn-tab-solo" onclick="cambiarTabInscripcion('solo')" style="flex: 1; padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; background: #8e44ad; color: white;">👤 Solo</button>
+                    <button class="tab-btn" id="btn-tab-club" onclick="cambiarTabInscripcion('club')" style="flex: 1; padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; background: #2a2a2a; color: #aaa;">🛡️ Mi Club</button>
+                </div>
+                <p id="texto-explicativo" style="color: #aaa; font-size: 0.85em; margin-bottom: 20px; text-align: center;">Apúntate a ti mismo a este torneo (Modo Individual).</p>
+            <?php endif; ?>
 
-                <?php if ($mi_club_lider): ?>
-                    <div class="tabs" style="display: flex; gap: 10px; margin-bottom: 20px;">
-                        <button class="tab-btn" id="btn-tab-solo" onclick="cambiarTabInscripcion('solo')" style="flex: 1; padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; background: #8e44ad; color: white;">👤 Solo</button>
-                        <button class="tab-btn" id="btn-tab-club" onclick="cambiarTabInscripcion('club')" style="flex: 1; padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; background: #2a2a2a; color: #aaa;">🛡️ Mi Club</button>
-                    </div>
-                <?php endif; ?>
-
-                <div id="form-solo" style="display: block;">
-                    <p style="color: #aaa; font-size: 0.9em; margin-bottom: 15px;">Apúntate a ti mismo a este torneo.</p>
+            <!-- PESTAÑA SOLO -->
+            <div id="form-solo" style="display: block;">
+                <?php if ($ya_inscrito_solo): ?>
+                    <div class="alerta ok" style="margin-bottom: 15px;">¡Ya estás inscrito en este torneo!</div>
+                    <form action="accion_inscripcion.php" method="POST">
+                        <input type="hidden" name="torneo_id" value="<?= $torneo['id'] ?>">
+                        <input type="hidden" name="modo" value="desapuntar_solo">
+                        <button type="submit" class="btn-outline" style="width: 100%; border-color: #e74c3c; color: #e74c3c;" onmouseover="this.style.background='#e74c3c'; this.style.color='white';" onmouseout="this.style.background='transparent'; this.style.color='#e74c3c';">❌ Cancelar mi Inscripción</button>
+                    </form>
+                <?php else: ?>
                     <form action="accion_inscripcion.php" method="POST">
                         <input type="hidden" name="torneo_id" value="<?= $torneo['id'] ?>">
                         <input type="hidden" name="modo" value="solo">
                         <button type="submit" class="btn-primario" style="width: 100%;">🎟️ Confirmar Inscripción</button>
                     </form>
-                </div>
+                <?php endif; ?>
+            </div>
 
-                <?php if ($mi_club_lider): ?>
-                <div id="form-club" style="display: none;">
-                    <p style="color: #aaa; font-size: 0.9em; margin-bottom: 15px;">
-                        Apunta a tu club <strong style="color: white;"><?= e($mi_club_lider['nombre']) ?></strong> al torneo. Se apuntarán todos tus miembros.
-                    </p>
+            <!-- PESTAÑA CLUB -->
+            <?php if ($mi_club_lider): ?>
+            <div id="form-club" style="display: none;">
+                <?php if ($club_inscrito): ?>
+                    <div class="alerta ok" style="margin-bottom: 15px;">Tu club ya está inscrito en este torneo.</div>
+                    <form action="accion_inscripcion.php" method="POST">
+                        <input type="hidden" name="torneo_id" value="<?= $torneo['id'] ?>">
+                        <input type="hidden" name="modo" value="desapuntar_club">
+                        <input type="hidden" name="club_id" value="<?= $mi_club_lider['id'] ?>">
+                        <button type="submit" class="btn-outline" style="width: 100%; border-color: #e74c3c; color: #e74c3c;" onmouseover="this.style.background='#e74c3c'; this.style.color='white';" onmouseout="this.style.background='transparent'; this.style.color='#e74c3c';">❌ Retirar a mi Club del Torneo</button>
+                    </form>
+                <?php else: ?>
                     <form action="accion_inscripcion.php" method="POST">
                         <input type="hidden" name="torneo_id" value="<?= $torneo['id'] ?>">
                         <input type="hidden" name="modo" value="club">
                         <input type="hidden" name="club_id" value="<?= $mi_club_lider['id'] ?>">
                         <button type="submit" class="btn-primario" style="width: 100%; background: linear-gradient(45deg, #9b59b6, #8e44ad);">🛡️ Inscribir a mi Club</button>
                     </form>
-                </div>
                 <?php endif; ?>
-
+            </div>
             <?php endif; ?>
+
         <?php endif; ?>
     </div>
 
@@ -184,14 +214,18 @@ $error = $_GET['err'] ?? '';
             document.getElementById('btn-tab-club').style.color = '#aaa';
         }
 
+        var texto = document.getElementById('texto-explicativo');
+
         if (tab === 'solo') {
             document.getElementById('form-solo').style.display = 'block';
             document.getElementById('btn-tab-solo').style.background = '#8e44ad';
             document.getElementById('btn-tab-solo').style.color = 'white';
+            if(texto) texto.innerText = "Apúntate a ti mismo a este torneo (Modo Individual).";
         } else {
             if(document.getElementById('form-club')) document.getElementById('form-club').style.display = 'block';
             document.getElementById('btn-tab-club').style.background = '#8e44ad';
             document.getElementById('btn-tab-club').style.color = 'white';
+            if(texto) texto.innerText = "Apunta a todos los miembros de tu club de golpe (Modo Equipo).";
         }
     }
 </script>
