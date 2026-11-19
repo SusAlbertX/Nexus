@@ -1,22 +1,64 @@
 <?php
 require_once 'config.php';
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+require 'PHPMailer/src/Exception.php';
+require 'PHPMailer/src/PHPMailer.php';
+require 'PHPMailer/src/SMTP.php';
+
 if (!isset($_SESSION['usuario_id'])) {
     header("Location: login.php");
     exit;
 }
 
 $pdo = getPDO();
+$pdo->exec("SET NAMES utf8mb4");
 $torneo_id = (int)($_POST['torneo_id'] ?? 0);
 $modo = $_POST['modo'] ?? 'solo'; 
 $club_id = isset($_POST['club_id']) ? (int)$_POST['club_id'] : null;
 $usuario_id = $_SESSION['usuario_id'];
 
+function enviarCorreoInscripcion($email, $nombre, $torneo) {
+    $mail = new PHPMailer(true);
+    try {
+        $mail->isSMTP();
+        $mail->Host       = 'smtp.gmail.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'nexusgamingclubsupport@gmail.com'; 
+        $mail->Password   = 'TU_CONTRASEÑA_DE_16_LETRAS';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = 587;
+        $mail->CharSet    = 'UTF-8';
+
+        $mail->setFrom('nexusgamingclubsupport@gmail.com', 'Nexus Torneos');
+        $mail->addAddress($email, $nombre);
+
+        $mail->isHTML(true);
+        $mail->Subject = "Confirmación de inscripción: " . $torneo['titulo'];
+        
+        $fecha = date('d/m/Y \a \l\a\s H:i', strtotime($torneo['fecha_inicio']));
+        
+        $mail->Body = "
+            <h2>¡Hola, {$nombre}!</h2>
+            <p>Te confirmamos que te has inscrito correctamente al torneo <strong>{$torneo['titulo']}</strong>.</p>
+            <p><strong>Detalles del torneo:</strong></p>
+            <ul>
+                <li><strong>Juego:</strong> " . strtoupper($torneo['juego']) . "</li>
+                <li><strong>Fecha:</strong> {$fecha}</li>
+                <li><strong>Premio:</strong> {$torneo['premio']}</li>
+            </ul>
+            <p>¡Prepárate y mucha suerte! 🎮</p>
+            <p>- El equipo de Nexus</p>
+        ";
+        $mail->send();
+    } catch (Exception $e) {
+    }
+}
+
 try {
-    $stmt = $pdo->prepare("SELECT max_jugadores, 
-        (SELECT COUNT(*) FROM inscripciones_torneo WHERE torneo_id = ?) AS inscritos 
-        FROM torneos WHERE id = ?");
-    $stmt->execute([$torneo_id, $torneo_id]);
+    $stmt = $pdo->prepare("SELECT * FROM torneos WHERE id = ?");
+    $stmt->execute([$torneo_id]);
     $torneo = $stmt->fetch();
 
     if (!$torneo) {
@@ -24,7 +66,10 @@ try {
         exit;
     }
 
-    $huecos_disponibles = $torneo['max_jugadores'] - $torneo['inscritos'];
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM inscripciones_torneo WHERE torneo_id = ?");
+    $stmt->execute([$torneo_id]);
+    $inscritos = $stmt->fetchColumn();
+    $huecos_disponibles = $torneo['max_jugadores'] - $inscritos;
 
     if ($modo === 'solo') {
         if ($huecos_disponibles <= 0) {
@@ -35,7 +80,15 @@ try {
         try {
             $stmt = $pdo->prepare("INSERT INTO inscripciones_torneo (torneo_id, usuario_id) VALUES (?, ?)");
             $stmt->execute([$torneo_id, $usuario_id]);
-            header("Location: detalle_torneo.php?id=$torneo_id&msg=" . urlencode('¡Inscripción individual confirmada!'));
+            
+            $stmt = $pdo->prepare("SELECT nombre, email FROM usuarios WHERE id = ?");
+            $stmt->execute([$usuario_id]);
+            $user = $stmt->fetch();
+            if ($user) {
+                enviarCorreoInscripcion($user['email'], $user['nombre'], $torneo);
+            }
+
+            header("Location: detalle_torneo.php?id=$torneo_id&msg=" . urlencode('¡Inscripción individual confirmada! Revisa tu correo.'));
         } catch (PDOException $e) {
             if ($e->getCode() == 23000) {
                 header("Location: detalle_torneo.php?id=$torneo_id&err=1&msg=" . urlencode('Ya estás inscrito en este torneo.'));
@@ -63,7 +116,7 @@ try {
             exit;
         }
 
-        $stmt = $pdo->prepare("SELECT usuario_id FROM miembros_club WHERE club_id = ?");
+        $stmt = $pdo->prepare("SELECT u.id, u.nombre, u.email FROM miembros_club m JOIN usuarios u ON m.usuario_id = u.id WHERE m.club_id = ?");
         $stmt->execute([$club_id]);
         $miembros = $stmt->fetchAll();
         $total_miembros = count($miembros);
@@ -82,8 +135,12 @@ try {
         foreach ($miembros as $m) {
             try {
                 $stmt = $pdo->prepare("INSERT INTO inscripciones_torneo (torneo_id, usuario_id, club_id) VALUES (?, ?, ?)");
-                $stmt->execute([$torneo_id, $m['usuario_id'], $club_id]);
+                $stmt->execute([$torneo_id, $m['id'], $club_id]);
                 $inscritos_con_exito++;
+                
+                // Enviar correo a cada miembro del club
+                enviarCorreoInscripcion($m['email'], $m['nombre'], $torneo);
+                
             } catch (PDOException $e) {
                 if ($e->getCode() == 23000) {
                     $inscritos_con_exito++;
@@ -93,7 +150,7 @@ try {
             }
         }
 
-        header("Location: detalle_torneo.php?id=$torneo_id&msg=" . urlencode("¡Club inscrito! Se han apuntado $inscritos_con_exito miembros."));
+        header("Location: detalle_torneo.php?id=$torneo_id&msg=" . urlencode("¡Club inscrito! Se han apuntado $inscritos_con_exito miembros y les ha llegado un correo."));
         exit;
     }
 

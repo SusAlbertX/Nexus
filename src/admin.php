@@ -29,14 +29,15 @@ $error = $_GET['err'] ?? '';
         <nav>
             <a href="index.php">Inicio</a>
             <a href="torneo.php">Ver Torneos</a>
-            <a href="admin.php" class="activo" style="color: #e74c3c;"> Panel de Control</a>
+            <a href="admin.php" class="activo" style="color: #e74c3c;">👑 Panel de Control</a>
             <a href="logout.php" style="color: #e74c3c;">Cerrar Sesión</a>
         </nav>
     </div>
 </header>
 
 <section class="hero" style="min-height: 20vh; background-image: linear-gradient(0deg, rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1600&q=80');">
-    <h1>Panel de Administración</h1>
+    <h1>👑 Panel de Administración</h1>
+    <p>Bienvenido, dueño de Nexus.</p>
 </section>
 
 <section class="container" style="padding: 20px;">
@@ -46,7 +47,7 @@ $error = $_GET['err'] ?? '';
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; align-items: start;">
         
         <div class="panel">
-            <h2 style="margin-top: 0; color: #9b59b6;"> Crear Nuevo Torneo</h2>
+            <h2 style="margin-top: 0; color: #9b59b6;">🏆 Crear Nuevo Torneo</h2>
             <form action="accion_admin.php" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="accion" value="crear_torneo">
                 
@@ -91,7 +92,7 @@ $error = $_GET['err'] ?? '';
                     <textarea name="descripcion" rows="3" maxlength="500" placeholder="Reglas del torneo..."></textarea>
                 </div>
                 
-                <button type="submit" class="btn-primario" style="width: 100%;"> Crear Torneo</button>
+                <button type="submit" class="btn-primario" style="width: 100%;">🚀 Crear Torneo</button>
             </form>
         </div>
 
@@ -122,7 +123,7 @@ $error = $_GET['err'] ?? '';
 
     </div>
 
-    <div style="display: grid; grid-template-columns: 1fr; gap: 25px; margin-top: 40px;">
+    <div style="display: grid; grid-template-columns: 1fr; gap: 25px; margin-top: 25px;">
         <div class="panel">
             <h2 style="margin-top: 0; color: #e74c3c;">🚫 Gestión de Usuarios</h2>
             <p style="color: #aaa; font-size: 0.9em;">Desde aquí puedes banear a usuarios problemáticos. Un usuario baneado no podrá iniciar sesión.</p>
@@ -153,7 +154,7 @@ $error = $_GET['err'] ?? '';
         </div>
     </div>
 
-    <div style="display: grid; grid-template-columns: 1fr; gap: 25px; margin-top: 40px;">
+    <div style="display: grid; grid-template-columns: 1fr; gap: 25px; margin-top: 25px;">
         <div class="panel">
             <h2 style="margin-top: 0; color: #9b59b6;">🛡️ Gestión de Clubes</h2>
             <p style="color: #aaa; font-size: 0.9em;">Puedes borrar cualquier club de la plataforma o expulsar a sus miembros.</p>
@@ -204,6 +205,44 @@ $error = $_GET['err'] ?? '';
             <?php endif; ?>
         </div>
     </div>
+
+    <div style="display: grid; grid-template-columns: 1fr; gap: 25px; margin-top: 25px;">
+        <div class="panel" style="border-top: 4px solid #e67e22;">
+            <h2 style="margin-top: 0; color: #e67e22;">✉️ Enviar Correo a Inscritos</h2>
+            <p style="color: #aaa; font-size: 0.9em;">Selecciona un torneo y envía un aviso a todos los jugadores que estén inscritos en él.</p>
+            
+            <form action="accion_admin_correos.php" method="POST">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    
+                    <div class="form-grupo">
+                        <label>Selecciona el Torneo *</label>
+                        <select name="torneo_id" required>
+                            <option value="">-- Elige un torneo --</option>
+                            <?php 
+                            $stmt_t = $pdo->query("SELECT id, titulo FROM torneos ORDER BY fecha_inicio DESC");
+                            while ($t = $stmt_t->fetch()) {
+                                echo "<option value='{$t['id']}'>{$t['titulo']}</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+
+                    <div class="form-grupo">
+                        <label>Asunto del Correo *</label>
+                        <input type="text" name="asunto" required placeholder="Ej: Cambio de hora en el torneo" maxlength="100">
+                    </div>
+                </div>
+
+                <div class="form-grupo">
+                    <label>Mensaje *</label>
+                    <textarea name="mensaje" rows="4" required placeholder="Escribe aquí el mensaje que quieres enviar a todos los jugadores..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-primario" style="background: linear-gradient(45deg, #e67e22, #d35400); width: 100%;">🚀 Enviar Correo a los Inscritos</button>
+            </form>
+        </div>
+    </div>
+
 </section>
 
 <footer><div class="container"><p>&copy; Nexus 2026 - Admin</p></div></footer>
