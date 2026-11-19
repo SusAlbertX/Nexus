@@ -26,7 +26,7 @@ function enviarCorreoInscripcion($email, $nombre, $torneo) {
         $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
         $mail->Username   = 'nexusgamingclubsupport@gmail.com'; 
-        $mail->Password   = 'TU_CONTRASEÑA_DE_16_LETRAS'; // <-- PON TU CONTRASEÑA AQUÍ
+        $mail->Password   = 'TU_CONTRASEÑA_DE_16_LETRAS';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
         $mail->CharSet    = 'UTF-8';
@@ -52,15 +52,11 @@ function enviarCorreoInscripcion($email, $nombre, $torneo) {
             <p>- El equipo de Nexus</p>
         ";
         $mail->send();
-        
-        // Si llega aquí, es que se ha enviado bien. Te avisamos en la web.
-        // (Descomenta la siguiente línea si quieres verlo en la pantalla, pero romperá el diseño)
-        // die("¡Correo enviado a " . $email . "!");
-
     } catch (Exception $e) {
-        // Si falla, paramos la web y te mostramos el error de PHPMailer
-        die("<h2 style='color:red; font-family:sans-serif; text-align:center; margin-top:50px;'>Fallo al enviar correo a $email</h2>
-             <p style='text-align:center; font-family:sans-serif;'>" . $mail->ErrorInfo . "</p>");
+        die("<div style='background:#e74c3c; color:white; padding:20px; margin:50px auto; max-width:600px; border-radius:10px; font-family:sans-serif; text-align:center;'>
+                <h3>Error al enviar correo a {$email}</h3>
+                <p>" . $mail->ErrorInfo . "</p>
+             </div>");
     }
 }
 
@@ -89,6 +85,7 @@ try {
             $stmt = $pdo->prepare("INSERT INTO inscripciones_torneo (torneo_id, usuario_id) VALUES (?, ?)");
             $stmt->execute([$torneo_id, $usuario_id]);
             
+            // Enviar correo al usuario
             $stmt = $pdo->prepare("SELECT nombre, email FROM usuarios WHERE id = ?");
             $stmt->execute([$usuario_id]);
             $user = $stmt->fetch();
@@ -146,7 +143,6 @@ try {
                 $stmt->execute([$torneo_id, $m['id'], $club_id]);
                 $inscritos_con_exito++;
                 
-                // Enviar correo a cada miembro del club
                 enviarCorreoInscripcion($m['email'], $m['nombre'], $torneo);
                 
             } catch (PDOException $e) {
