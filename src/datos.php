@@ -14,20 +14,25 @@ function datos_torneos(?string $juegoSlug = null): array {
     $pdo = getPDO();
     $pdo->exec("SET NAMES utf8mb4");
 
-
+    $query = "SELECT t.*, 
+              (SELECT COUNT(*) FROM inscripciones_torneo i WHERE i.torneo_id = t.id) AS inscritos 
+              FROM torneos t";
+    
     if ($juegoSlug === null || $juegoSlug === 'todos') {
-        $stmt = $pdo->query("SELECT *, 0 AS inscritos FROM torneos ORDER BY fecha_inicio ASC");
+        $stmt = $pdo->query($query . " ORDER BY t.fecha_inicio ASC");
         return $stmt->fetchAll();
     }
     
-    $stmt = $pdo->prepare("SELECT *, 0 AS inscritos FROM torneos WHERE juego = ? ORDER BY fecha_inicio ASC");
+    $stmt = $pdo->prepare($query . " WHERE t.juego = ? ORDER BY t.fecha_inicio ASC");
     $stmt->execute([$juegoSlug]);
     return $stmt->fetchAll();
 }
 
 function datos_torneo(int $id): ?array {
     $pdo = getPDO();
-    $stmt = $pdo->prepare("SELECT *, 0 AS inscritos FROM torneos WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT t.*, 
+              (SELECT COUNT(*) FROM inscripciones_torneo i WHERE i.torneo_id = t.id) AS inscritos 
+              FROM torneos t WHERE t.id = ?");
     $stmt->execute([$id]);
     return $stmt->fetch() ?: null;
 }

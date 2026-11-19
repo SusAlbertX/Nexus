@@ -66,6 +66,7 @@ $error = $_GET['err'] ?? '';
         <img src="<?= $torneo['imagen'] ? e($torneo['imagen']) : 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80' ?>" 
              alt="<?= e($torneo['titulo']) ?>" style="width:100%; border-radius:12px; margin-bottom:20px;">
         <p><?= nl2br(e($torneo['descripcion'])) ?></p>
+        
         <div class="torneo-stats" style="margin-top:20px;">
             <div class="stat-item">
                 <div class="stat-numero"><?= e($torneo['premio']) ?></div>
@@ -131,6 +132,39 @@ $error = $_GET['err'] ?? '';
                 <?php endif; ?>
 
             <?php endif; ?>
+        <?php endif; ?>
+    </div>
+
+    <div class="panel" style="margin-top: 0; width: 100%; grid-column: 1 / -1;">
+        <h3 style="margin-top: 0; color: #2ecc71;">👥 Jugadores Inscritos</h3>
+        <?php
+        $stmt_inscritos = $pdo->prepare("SELECT u.id, u.nombre, i.fecha_inscripcion, c.nombre AS club_nombre 
+                                         FROM inscripciones_torneo i 
+                                         JOIN usuarios u ON i.usuario_id = u.id 
+                                         LEFT JOIN clubs c ON i.club_id = c.id
+                                         WHERE i.torneo_id = ? 
+                                         ORDER BY i.fecha_inscripcion ASC");
+        $stmt_inscritos->execute([$id]);
+        $lista_inscritos = $stmt_inscritos->fetchAll();
+
+        if (empty($lista_inscritos)): ?>
+            <p style="color: #777; font-style: italic;">Nadie se ha inscrito todavía. ¡Sé el primero!</p>
+        <?php else: ?>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px;">
+                <?php foreach ($lista_inscritos as $ins): ?>
+                    <a href="perfil.php?id=<?= $ins['id'] ?>" style="text-decoration: none;">
+                        <div style="background: #121212; border: 1px solid #333; padding: 10px 15px; border-radius: 10px; display: flex; align-items: center; gap: 10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                            <div style="width: 35px; height: 35px; background: #2a2a2a; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">🎮</div>
+                            <div>
+                                <span style="color: white; font-weight: bold; font-size: 0.95em;"><?= e($ins['nombre']) ?></span>
+                                <?php if ($ins['club_nombre']): ?>
+                                    <span style="display: block; color: #9b59b6; font-size: 0.75em;">🛡️ <?= e($ins['club_nombre']) ?></span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </a>
+                <?php endforeach; ?>
+            </div>
         <?php endif; ?>
     </div>
 
