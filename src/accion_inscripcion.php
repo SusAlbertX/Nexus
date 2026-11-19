@@ -73,5 +73,10 @@ try {
     exit;
 
 } catch (PDOException $e) {
-    die("<h3 style='color:red; text-align:center; margin-top:50px; font-family:sans-serif;'>Error de base de datos:</h3><p style='text-align:center; font-family:sans-serif;'>" . $e->getMessage() . "</p>");
+    if ($e->getCode() == 23000) {
+        header("Location: detalle_torneo.php?id=$torneo_id&err=1&msg=" . urlencode('Ya estás inscrito en este torneo.'));
+    } else {
+        die("Error de base de datos: " . $e->getMessage());
+    }
+    exit;
 }
