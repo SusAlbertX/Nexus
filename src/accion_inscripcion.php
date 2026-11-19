@@ -8,7 +8,7 @@ if (!isset($_SESSION['usuario_id'])) {
 
 $pdo = getPDO();
 $torneo_id = (int)($_POST['torneo_id'] ?? 0);
-$modo = $_POST['modo'] ?? 'solo';
+$modo = $_POST['modo'] ?? 'solo'; 
 $club_id = isset($_POST['club_id']) ? (int)$_POST['club_id'] : null;
 $usuario_id = $_SESSION['usuario_id'];
 
@@ -61,13 +61,11 @@ try {
                 $stmt->execute([$torneo_id, $m['usuario_id'], $club_id]);
                 $inscritos_con_exito++;
             } catch (PDOException $e) {
-                if ($e->getCode() != 23000) {
-                    throw $e;
-                }
+                if ($e->getCode() != 23000) { throw $e; }
             }
         }
 
-        header("Location: detalle_torneo.php?id=$torneo_id&msg=" . urlencode("¡Club inscrito! Se han apuntado $inscritos_con_exito miembros al torneo."));
+        header("Location: detalle_torneo.php?id=$torneo_id&msg=" . urlencode("¡Club inscrito! Se han apuntado $inscritos_con_exito miembros."));
         exit;
     }
 
@@ -75,6 +73,5 @@ try {
     exit;
 
 } catch (PDOException $e) {
-    header("Location: detalle_torneo.php?id=$torneo_id&err=1&msg=" . urlencode('Error al procesar la inscripción.'));
-    exit;
+    die("<h3 style='color:red; text-align:center; margin-top:50px; font-family:sans-serif;'>Error de base de datos:</h3><p style='text-align:center; font-family:sans-serif;'>" . $e->getMessage() . "</p>");
 }
