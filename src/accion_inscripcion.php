@@ -26,7 +26,7 @@ function enviarCorreoInscripcion($email, $nombre, $torneo) {
         $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
         $mail->Username   = 'nexusgamingclubsupport@gmail.com'; 
-        $mail->Password   = 'TU_CONTRASEÑA_DE_16_LETRAS';
+        $mail->Password   = 'TU_CONTRASEÑA_DE_16_LETRAS'; // <-- PON TU CONTRASEÑA AQUÍ
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
         $mail->CharSet    = 'UTF-8';
@@ -52,7 +52,15 @@ function enviarCorreoInscripcion($email, $nombre, $torneo) {
             <p>- El equipo de Nexus</p>
         ";
         $mail->send();
+        
+        // Si llega aquí, es que se ha enviado bien. Te avisamos en la web.
+        // (Descomenta la siguiente línea si quieres verlo en la pantalla, pero romperá el diseño)
+        // die("¡Correo enviado a " . $email . "!");
+
     } catch (Exception $e) {
+        // Si falla, paramos la web y te mostramos el error de PHPMailer
+        die("<h2 style='color:red; font-family:sans-serif; text-align:center; margin-top:50px;'>Fallo al enviar correo a $email</h2>
+             <p style='text-align:center; font-family:sans-serif;'>" . $mail->ErrorInfo . "</p>");
     }
 }
 
