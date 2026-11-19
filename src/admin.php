@@ -95,7 +95,6 @@ $error = $_GET['err'] ?? '';
             </form>
         </div>
 
-        <!-- GESTIÓN DE TORNEOS -->
         <div class="panel">
             <h2 style="margin-top: 0; color: #2ecc71;">⚙️ Torneos Activos</h2>
             <?php
@@ -121,6 +120,89 @@ $error = $_GET['err'] ?? '';
             <?php endif; ?>
         </div>
 
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr; gap: 25px; margin-top: 40px;">
+        <div class="panel">
+            <h2 style="margin-top: 0; color: #e74c3c;">🚫 Gestión de Usuarios</h2>
+            <p style="color: #aaa; font-size: 0.9em;">Desde aquí puedes banear a usuarios problemáticos. Un usuario baneado no podrá iniciar sesión.</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+                <?php
+                $usuarios = $pdo->query("SELECT id, nombre, email, baneado FROM usuarios WHERE nombre != 'AlbertUltimate' ORDER BY id DESC")->fetchAll();
+                foreach ($usuarios as $u): ?>
+                    <div style="background: #121212; padding: 15px; border-radius: 10px; border: 1px solid #333; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong style="color: <?= $u['baneado'] ? '#e74c3c' : 'white' ?>;"><?= e($u['nombre']) ?></strong>
+                            <span style="color: #777; font-size: 0.8em; margin-left: 10px;">(<?= e($u['email']) ?>)</span>
+                            <?php if ($u['baneado']): ?>
+                                <span style="background: #e74c3c; color: white; font-size: 0.7em; padding: 2px 6px; border-radius: 5px; margin-left: 10px;">BANEADO</span>
+                            <?php endif; ?>
+                        </div>
+                        <form action="accion_admin.php" method="POST" onsubmit="return confirm('¿Seguro que quieres cambiar el estado de baneo de este usuario?');">
+                            <input type="hidden" name="accion" value="banear">
+                            <input type="hidden" name="usuario_id" value="<?= $u['id'] ?>">
+                            <input type="hidden" name="baneado_actual" value="<?= $u['baneado'] ?>">
+                            <button type="submit" style="background: <?= $u['baneado'] ? '#2ecc71' : '#e74c3c' ?>; border: none; padding: 5px 15px; font-size: 0.8em;">
+                                <?= $u['baneado'] ? 'Desbanear' : 'Banear' ?>
+                            </button>
+                        </form>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr; gap: 25px; margin-top: 40px;">
+        <div class="panel">
+            <h2 style="margin-top: 0; color: #9b59b6;">🛡️ Gestión de Clubes</h2>
+            <p style="color: #aaa; font-size: 0.9em;">Puedes borrar cualquier club de la plataforma o expulsar a sus miembros.</p>
+            
+            <?php
+            $clubes = $pdo->query("SELECT c.*, u.nombre AS lider FROM clubs c JOIN usuarios u ON c.lider_id = u.id")->fetchAll();
+            if (empty($clubes)): ?>
+                <p style="color: #777;">No hay clubes creados aún.</p>
+            <?php else: ?>
+                <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 15px;">
+                    <?php foreach ($clubes as $c): ?>
+                        <div style="background: #121212; padding: 15px; border-radius: 10px; border: 1px solid #333;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 10px;">
+                                <div>
+                                    <strong style="color: white; font-size: 1.1em;"><?= e($c['icono']) ?> <?= e($c['nombre']) ?></strong>
+                                    <div style="color: #777; font-size: 0.8em;">Líder: <?= e($c['lider']) ?></div>
+                                </div>
+                                <form action="accion_admin.php" method="POST" onsubmit="return confirm('¡CUIDADO! ¿Seguro que quieres borrar este club entero?');">
+                                    <input type="hidden" name="accion" value="borrar_club_admin">
+                                    <input type="hidden" name="club_id" value="<?= $c['id'] ?>">
+                                    <button type="submit" style="background: transparent; color: #e74c3c; border: 1px solid #e74c3c; padding: 5px 10px; font-size: 0.8em;">🗑️ Borrar Club</button>
+                                </form>
+                            </div>
+                            
+                            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                                <?php
+                                $stmt_m = $pdo->prepare("SELECT u.id, u.nombre FROM miembros_club m JOIN usuarios u ON m.usuario_id = u.id WHERE m.club_id = ?");
+                                $stmt_m->execute([$c['id']]);
+                                $miembros = $stmt_m->fetchAll();
+                                
+                                foreach ($miembros as $m): ?>
+                                    <div style="background: #2a2a2a; padding: 5px 10px; border-radius: 20px; display: flex; align-items: center; gap: 10px; font-size: 0.85em;">
+                                        <?= e($m['nombre']) ?>
+                                        <?php if ($m['id'] != $c['lider_id']): ?>
+                                            <form action="accion_admin.php" method="POST" onsubmit="return confirm('¿Expulsar a este usuario del club?');">
+                                                <input type="hidden" name="accion" value="expulsar_admin">
+                                                <input type="hidden" name="club_id" value="<?= $c['id'] ?>">
+                                                <input type="hidden" name="usuario_id" value="<?= $m['id'] ?>">
+                                                <button type="submit" style="background: transparent; color: #e74c3c; border: none; font-size: 1.2em; padding: 0; cursor: pointer;" title="Expulsar">&times;</button>
+                                            </form>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </div>
     </div>
 </section>
 

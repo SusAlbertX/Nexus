@@ -46,4 +46,40 @@ elseif ($accion === 'borrar_torneo') {
 else {
     header("Location: admin.php");
     exit;
+
+    elseif ($accion === 'banear') {
+    $usuario_id = (int)$_POST['usuario_id'];
+    $estado_actual = (int)$_POST['baneado_actual'];
+    $nuevo_estado = $estado_actual === 1 ? 0 : 1;
+    
+    $stmt = $pdo->prepare("UPDATE usuarios SET baneado = ? WHERE id = ?");
+    $stmt->execute([$nuevo_estado, $usuario_id]);
+    
+    header("Location: admin.php?msg=" . urlencode('Estado de baneo actualizado.'));
+    exit;
+}
+elseif ($accion === 'borrar_club_admin') {
+    $club_id = (int)$_POST['club_id'];
+    
+    $stmt = $pdo->prepare("DELETE FROM miembros_club WHERE club_id = ?");
+    $stmt->execute([$club_id]);
+    $stmt = $pdo->prepare("DELETE FROM solicitudes_club WHERE club_id = ?");
+    $stmt->execute([$club_id]);
+    
+    $stmt = $pdo->prepare("DELETE FROM clubs WHERE id = ?");
+    $stmt->execute([$club_id]);
+    
+    header("Location: admin.php?msg=" . urlencode('El club ha sido eliminado por el administrador.'));
+    exit;
+}
+elseif ($accion === 'expulsar_admin') {
+    $club_id = (int)$_POST['club_id'];
+    $usuario_id = (int)$_POST['usuario_id'];
+    
+    $stmt = $pdo->prepare("DELETE FROM miembros_club WHERE club_id = ? AND usuario_id = ?");
+    $stmt->execute([$club_id, $usuario_id]);
+    
+    header("Location: admin.php?msg=" . urlencode('Usuario expulsado del club.'));
+    exit;
+}
 }

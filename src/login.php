@@ -1,7 +1,7 @@
 <?php
 require_once 'config.php';
 
-if (isset($_SESSION['usuario_id'])) {
+¡if (isset($_SESSION['usuario_id'])) {
     header("Location: index.php");
     exit;
 }
@@ -20,10 +20,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = $stmt->fetch();
         
         if ($user && password_verify($password, $user['password_hash'])) {
-            $_SESSION['usuario_id'] = $user['id'];
-            $_SESSION['usuario_nombre'] = $user['nombre'];
-            header("Location: index.php");
-            exit;
+¡            if ($user['baneado'] == 1) {
+                $error = "Tu cuenta ha sido suspendida por un administrador. Contacta con soporte.";
+            } else {
+¡                $_SESSION['usuario_id'] = $user['id'];
+                $_SESSION['usuario_nombre'] = $user['nombre'];
+                header("Location: index.php");
+                exit;
+            }
         } else {
             $error = "Usuario o contraseña incorrectos.";
         }
