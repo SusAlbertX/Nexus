@@ -1,0 +1,114 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+
+\title{Memoria Nexus Gaming Club}
+\author{Albert y Sergio}
+\date{Curso 2026-2027}
+
+\begin{document}
+
+\maketitle
+
+\section{Introducción, problema y objetivos}
+
+\subsection{Nombre del proyecto y frase de venta}
+Nuestro proyecto se llama Nexus Gaming Club. 
+La frase de venta es: Infraestructura de red y sistemas de alto rendimiento para un edificio físico dedicado al gaming y eSports.
+
+\subsection{Problema o necesidad}
+Los clubs de videojuegos tienen varios problemas hoy en día:
+\begin{itemize}
+    \item No tienen red propia y dependen de plataformas externas.
+    \item La red no está preparada para jugar con buen ping.
+    \item No hay servidores propios de juego ni de voz.
+    \item La información está repartida por varios sitios.
+    \item No hay seguridad real (ni firewall, ni copias de seguridad).
+\end{itemize}
+
+\subsection{Usuarios}
+Los usuarios que van a usar nuestro sistema son:
+\begin{itemize}
+    \item Administradores: Para gestionar usuarios y servidores.
+    \item Moderadores: Para gestionar el contenido.
+    \item Jugadores: Para acceder a los escritorios y torneos.
+    \item Visitantes: Para ver la página web.
+\end{itemize}
+
+\subsection{Objetivos}
+Los objetivos que queremos conseguir este curso son:
+\begin{enumerate}
+    \item Montar la red local y el wifi.
+    \item Configurar los servidores (DHCP, DNS, etc.).
+    \item Hacer una página web con HTML y CSS.
+    \item Poner un firewall y hacer copias de seguridad.
+    \item Documentar todo en latex y subirlo a GitHub.
+\end{enumerate}
+
+\section{Diseño de la Red}
+
+Para la red del club, hemos diseñado una topologia en estrella. 
+Utilizaremos un Router para la salida a Internet, un Switch principal, un Servidor para los servicios (DHCP, DNS, web y juego) y un Punto de Acceso Wifi para los portatiles y moviles.
+
+El diseño lo hemos realizado en la herramienta Packet Tracer de Cisco. 
+Para la red Wi-Fi hemos configurado el SSID "Nexus\_Wifi" con seguridad WPA2-PSK (AES) para que la conexión sea segura y nadie sin contraseña pueda conectarse.
+
+\section{Configuración de Servicios Básicos}
+
+Para la infraestructura de Nexus, hemos virtualizado un servidor con Windows Server 2025. Una vez instalado, le asignamos una dirección IP estatica (192.168.1.10) para que los servicios no pierdan la conexion.
+
+\subsection{DHCP}
+Hemos instalado el rol de DHCP y creado un ambito llamado "Rango-Nexus" que asigna direcciones IP desde la 192.168.1.100 hasta la 192.168.1.200 a los puestos de juego.
+
+\subsection{DNS}
+Hemos configurado el servidor DNS creando una zona de busqueda directa llamada "nexus.local" y un registro de host (A) para el servidor.
+
+\subsection{Servidor de Archivos}
+Para compartir recursos, hemos creado una carpeta en el servidor llamada "Nexus\_Documentos" y la hemos compartido en red con permisos de control total para el grupo de usuarios.
+
+\section{Servicios de Red Avanzados}
+
+\subsection{Servidor de Voz (Mumble)}
+Para la comunicacion del club, hemos instalado el servidor de voz Mumble en Windows Server. Configuramos el servicio para que se inicie automaticamente, y probamos su funcionamiento conectando un equipo cliente desde fuera de la máquina virtual, con resultado exitoso.
+
+\subsection{Servidor de Juego}
+Para las partidas del club, hemos instalado un servidor de Minecraft. Instalamos Java, descargamos el archivo del servidor, aceptamos los términos de la licencia y lo ejecutamos.
+
+\section{Desarrollo de la Plataforma Web y Base de Datos}
+
+Una vez establecida la infraestructura de red y los servidores locales (Mumble y Minecraft), el siguiente paso del proyecto fue el desarrollo de una plataforma web completa para gestionar la comunidad del club. Esta web no solo sirve como escaparate, sino que actúa como el sistema central donde los usuarios interactúan, se organizan en equipos y compiten.
+
+\subsection{Arquitectura del Sistema}
+Para el desarrollo, se optó por un stack tecnológico basado en \textbf{PHP} para el backend, \textbf{MySQL} para la persistencia de datos y \textbf{HTML/CSS} junto con JavaScript para el frontend. El alojamiento se realiza en un servidor externo (ByetHost) para garantizar que la web sea accesible públicamente desde cualquier red, independientemente de la red local del club.
+
+\subsection{Sistema de Usuarios y Seguridad}
+Se implementó un sistema de autenticación robusto. Las contraseñas de los usuarios no se guardan en texto plano, sino que se encriptan utilizando el algoritmo de hashing \texttt{Bcrypt} (a través de \texttt{password\_hash} en PHP). 
+
+Además, se desarrolló un sistema de recuperación de contraseñas mediante correo electrónico utilizando la librería \textbf{PHPMailer} conectada a una cuenta de Gmail corporativa. Para garantizar la seguridad, los usuarios pueden ser baneados por un administrador, impidiendo su acceso a la plataforma.
+
+\subsection{Gestión de Equipos (Clubs)}
+Una de las funcionalidades clave es la creación de Clubs. Los usuarios pueden crear sus propios equipos (con un límite máximo de 10 miembros). El sistema diferencia entre:
+\begin{itemize}
+    \item \textbf{Clubs Públicos:} Cualquier usuario puede unirse directamente.
+    \item \textbf{Clubs Privados:} El usuario debe enviar una solicitud de ingreso. El líder del club recibe una notificación en su panel de gestión y puede aceptar o rechazar la solicitud.
+\end{itemize}
+
+\subsection{Creación y Gestión de Torneos}
+Se ha desarrollado un Panel de Administración exclusivo para el rol de administrador. Desde este panel, es posible:
+\begin{itemize}
+    \item Crear torneos definiendo el juego (Fortnite, CS2, etc.), premios, aforo máximo y fecha de inicio.
+    \item Inscribir a los usuarios de forma individual o inscribir a un club entero (apuntando a todos sus miembros de golpe).
+    \item El sistema cuenta con un control de aforo que impide que se inscriban más jugadores de los permitidos y calcula en tiempo real los huecos disponibles.
+    \item Los torneos cuentan con una cuenta atrás en tiempo real para indicar cuándo empiezan.
+\end{itemize}
+
+\subsection{Panel de Administración}
+El administrador dispone de un centro de control desde el cual puede visualizar estadísticas, crear torneos, gestionar a los miembros de cualquier club y aplicar medidas disciplinarias (como el baneo de usuarios) para mantener la integridad de la comunidad.
+
+\section{Control de Versiones y Documentación}
+
+Para garantizar la integridad del código y facilitar el trabajo en equipo, todo el desarrollo de la plataforma web y la infraestructura de red ha sido versionado utilizando \textbf{Git} y alojado en un repositorio público de \textbf{GitHub}. 
+
+Esta práctica nos ha permitido llevar un registro de los cambios realizados, revertir errores en caso de fallo y mantener una copia de seguridad en la nube de todos los archivos. La memoria del proyecto también se ha redactado en \LaTeX{} y se ha incluido en dicho repositorio para su continua actualización.
+
+\end{document}
