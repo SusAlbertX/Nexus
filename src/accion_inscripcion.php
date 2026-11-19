@@ -85,7 +85,6 @@ try {
             $stmt = $pdo->prepare("INSERT INTO inscripciones_torneo (torneo_id, usuario_id) VALUES (?, ?)");
             $stmt->execute([$torneo_id, $usuario_id]);
             
-            // Enviar correo al usuario
             $stmt = $pdo->prepare("SELECT nombre, email FROM usuarios WHERE id = ?");
             $stmt->execute([$usuario_id]);
             $user = $stmt->fetch();
