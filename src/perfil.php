@@ -46,6 +46,7 @@ $es_mi_perfil = ($perfil_id === $mi_id);
             <a href="clubs.php">Clubs</a>
             <a href="servidores.php">Servidores</a>
             <a href="soporte.php">Soporte</a>
+            <a href="actualizaciones.php">Actualizaciones</a>
             <?php if (isset($_SESSION['usuario_id'])): ?>
                 <div class="user-menu">
                     <a>👤 <?= e($_SESSION['usuario_nombre']) ?> ▾</a>

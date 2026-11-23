@@ -23,6 +23,7 @@ $destacados = array_slice(datos_torneos(), 0, 3);
             <a href="clubs.php">Clubs</a>
             <a href="servidores.php">Servidores</a>
             <a href="soporte.php">Soporte</a>
+            <a href="actualizaciones.php">Actualizaciones</a>
             <?php if (isset($_SESSION['usuario_id'])): ?>
                 <div class="user-menu">
                     <a>👤 <?= e($_SESSION['usuario_nombre']) ?> ▾</a>

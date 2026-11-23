@@ -86,6 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <a href="clubs.php">Clubs</a>
             <a href="servidores.php">Servidores</a>
             <a href="soporte.php">Soporte</a>
+            <a href="actualizaciones.php">Actualizaciones</a>
             <a href="login.php" class="activo">Acceso</a>
         </nav>
     </div>
