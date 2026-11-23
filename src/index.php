@@ -21,6 +21,7 @@ $destacados = array_slice(datos_torneos(), 0, 3);
             <a href="index.php" style="color: purple;">Inicio</a>
             <a href="torneo.php">Torneos</a>
             <a href="clubs.php">Clubs</a>
+            <a href="forums.php">Forums</a>
             <a href="servidores.php">Servidores</a>
             <a href="soporte.php">Soporte</a>
             <a href="actualizaciones.php">Actualizaciones</a>

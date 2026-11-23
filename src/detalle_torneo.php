@@ -56,6 +56,7 @@ if (isset($_SESSION['usuario_id'])) {
             <a href="index.php">Inicio</a>
             <a href="torneo.php" class="activo">Torneos</a>
             <a href="clubs.php">Clubs</a>
+            <a href="forums.php">Forums</a>
             <a href="servidores.php">Servidores</a>
             <a href="soporte.php">Soporte</a>
             <a href="actualizaciones.php">Actualizaciones</a>

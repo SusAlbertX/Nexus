@@ -18,6 +18,7 @@
             <a href="index.php">Inicio</a>
             <a href="torneo.php">Torneos</a>
             <a href="clubs.php">Clubs</a>
+            <a href="forums.php">Forums</a>
             <a href="servidores.php">Servidores</a>
             <a href="soporte.php" class="activo">Soporte</a>
             <a href="actualizaciones.php">Actualizaciones</a>
