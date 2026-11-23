@@ -33,6 +33,9 @@ if ($club['es_privado'] && !$soy_miembro && $club['lider_id'] != $mi_id) {
 $stmt = $pdo->prepare("SELECT u.id, u.nombre, m.fecha_union FROM miembros_club m JOIN usuarios u ON m.usuario_id = u.id WHERE m.club_id = ? ORDER BY m.fecha_union ASC");
 $stmt->execute([$club_id]);
 $miembros = $stmt->fetchAll();
+
+$mensaje = $_GET['msg'] ?? '';
+$error = $_GET['err'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -61,6 +64,9 @@ $miembros = $stmt->fetchAll();
                     <div class="dropdown-content">
                         <a href="perfil.php">👤 Mi Perfil</a>
                         <a href="ajustes.php">⚙️ Ajustes de cuenta</a>
+                        <?php if (isset($_SESSION['usuario_nombre']) && $_SESSION['usuario_nombre'] === 'AlbertUltimate'): ?>
+                            <a href="admin.php" style="color: #e74c3c !important; font-weight: bold;">👑 Panel de Admin</a>
+                        <?php endif; ?>
                         <a href="logout.php" class="logout-link">🚪 Cerrar Sesión</a>
                     </div>
                 </div>
@@ -76,8 +82,8 @@ $miembros = $stmt->fetchAll();
 
 <section class="container" style="padding: 20px; max-width: 900px;">
     
-    <?php if (isset($_GET['msg'])): ?>
-        <div class="alerta <?= isset($_GET['err']) ? 'error' : 'ok' ?>"><?= e($_GET['msg']) ?></div>
+    <?php if ($mensaje): ?>
+        <div class="alerta <?= $error ? 'error' : 'ok' ?>"><?= e($mensaje) ?></div>
     <?php endif; ?>
 
     <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 25px; align-items: start;">
@@ -108,7 +114,7 @@ $miembros = $stmt->fetchAll();
             </div>
 
             <?php if ($club['lider_id'] == $mi_id): ?>
-                <button class="btn-primario" style="width: 100%; margin-top: 20px;" onclick="location.href='mi_club.php'">⚙️ Gestionar mi Club</button>
+                <button class="btn-primario" style="width: 100%; margin-top: 20px;" onclick="location.href='mi_club.php?id=<?= $club['id'] ?>'">⚙️ Gestionar mi Club</button>
             <?php endif; ?>
         </div>
 
@@ -136,6 +142,40 @@ $miembros = $stmt->fetchAll();
             </div>
         </div>
     </div>
+
+    <div class="panel" style="margin-top: 25px; border-top: 4px solid #3498db;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin-top: 0; color: #3498db;">📊 Club Polls</h3>
+            
+            <?php if ($club['lider_id'] == $mi_id): ?>
+                <button class="btn-primario" style="background: #3498db; padding: 8px 15px; font-size: 0.9em;" onclick="alert('¡Próximamente! Estamos trabajando en el creador de encuestas.')">➕ Crear Encuesta</button>
+            <?php endif; ?>
+        </div>
+
+        <?php
+        $stmt_encuesta = $pdo->prepare("SELECT * FROM encuestas_club WHERE club_id = ?");
+        $stmt_encuesta->execute([$club_id]);
+        $encuesta = $stmt_encuesta->fetch();
+
+        if ($encuesta): ?>
+            <div style="background: #121212; padding: 20px; border-radius: 10px; border: 1px solid #333; margin-top: 15px;">
+                <h4 style="color: white; margin-top: 0;"><?= e($encuesta['pregunta']) ?></h4>
+                <p style="color: #aaa; font-size: 0.9em;">Creada por el líder. (Sistema de votación en desarrollo...)</p>
+                <?php if ($club['lider_id'] == $mi_id): ?>
+                    <form action="accion_club.php" method="POST" style="margin-top: 15px;">
+                        <input type="hidden" name="accion" value="borrar_encuesta">
+                        <input type="hidden" name="club_id" value="<?= $club_id ?>">
+                        <button type="submit" style="background: transparent; color: #e74c3c; border: 1px solid #e74c3c; padding: 5px 15px; font-size: 0.8em;" onclick="return confirm('¿Seguro que quieres borrar la encuesta actual?');">🗑️ Borrar Encuesta</button>
+                    </form>
+                <?php endif; ?>
+            </div>
+        <?php else: ?>
+            <div style="background: #121212; border: 1px dashed #333; padding: 20px; border-radius: 10px; text-align: center; margin-top: 15px;">
+                <p style="color: #777; margin: 0;">No hay encuestas activas en este club.</p>
+            </div>
+        <?php endif; ?>
+    </div>
+
 </section>
 
 <footer><div class="container"><p>&copy; Nexus 2026 - Club de Videojuegos</p></div></footer>

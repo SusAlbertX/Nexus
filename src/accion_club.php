@@ -12,7 +12,6 @@ $pdo->exec("SET NAMES utf8mb4");
 $mi_id = $_SESSION['usuario_id'];
 $accion = $_POST['accion'] ?? '';
 
-
 if ($accion === 'crear') {
     $nombre = trim($_POST['nombre'] ?? '');
     $descripcion = trim($_POST['descripcion'] ?? '');
@@ -51,8 +50,6 @@ if ($accion === 'crear') {
         exit;
     }
 } 
-
-
 elseif ($accion === 'unirse') {
     $club_id = (int)($_POST['club_id'] ?? 0);
 
@@ -93,8 +90,6 @@ elseif ($accion === 'unirse') {
         exit;
     }
 }
-
-
 elseif ($accion === 'solicitar') {
     $club_id = (int)$_POST['club_id'];
     
@@ -116,8 +111,6 @@ elseif ($accion === 'solicitar') {
         exit;
     }
 }
-
-
 elseif ($accion === 'aceptar') {
     $solicitud_id = (int)$_POST['solicitud_id'];
     $club_id = (int)$_POST['club_id'];
@@ -144,8 +137,6 @@ elseif ($accion === 'aceptar') {
     header("Location: mi_club.php?id=" . $club_id . "&msg=" . urlencode('Jugador aceptado en el club.'));
     exit;
 }
-
-
 elseif ($accion === 'rechazar') {
     $solicitud_id = (int)$_POST['solicitud_id'];
     $club_id = (int)$_POST['club_id'];
@@ -160,7 +151,6 @@ elseif ($accion === 'rechazar') {
     header("Location: mi_club.php?id=" . $club_id . "&msg=" . urlencode('Solicitud rechazada.'));
     exit;
 }
-
 elseif ($accion === 'editar') {
     $club_id = (int)$_POST['club_id'];
     $nombre = trim($_POST['nombre']);
@@ -185,7 +175,6 @@ elseif ($accion === 'editar') {
     }
     exit;
 }
-
 elseif ($accion === 'borrar') {
     $club_id = (int)$_POST['club_id'];
 
@@ -210,8 +199,6 @@ elseif ($accion === 'borrar') {
         exit;
     }
 }
-
-
 elseif ($accion === 'expulsar') {
     $club_id = (int)$_POST['club_id'];
     $usuario_id = (int)$_POST['usuario_id'];
@@ -225,7 +212,19 @@ elseif ($accion === 'expulsar') {
     header("Location: mi_club.php?id=" . $club_id . "&msg=" . urlencode('Miembro expulsado del club.'));
     exit;
 }
+elseif ($accion === 'borrar_encuesta') {
+    $club_id = (int)$_POST['club_id'];
 
+    $stmt = $pdo->prepare("SELECT lider_id FROM clubs WHERE id = ?");
+    $stmt->execute([$club_id]);
+    if ($stmt->fetch()['lider_id'] != $mi_id) { die("No tienes permiso."); }
+
+    $stmt = $pdo->prepare("DELETE FROM encuestas_club WHERE club_id = ?");
+    $stmt->execute([$club_id]);
+    
+    header("Location: ver_club.php?id=" . $club_id . "&msg=" . urlencode('Encuesta eliminada.'));
+    exit;
+}
 else {
     header("Location: clubs.php");
     exit;
