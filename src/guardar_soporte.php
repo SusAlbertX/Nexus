@@ -1,4 +1,6 @@
 <?php
+require_once 'config.php';
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 require 'PHPMailer/src/Exception.php';
@@ -24,9 +26,7 @@ try {
     $mail->Host       = 'smtp.gmail.com';
     $mail->SMTPAuth   = true;
     $mail->Username   = 'nexusgamingclubsupport@gmail.com'; 
-    
-    $mail->Password   = 'TU_CONTRASEÑA_AQUI'; 
-    
+    $mail->Password   = 'TU_CONTRASEÑA_DE_16_LETRAS'; 
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
     $mail->Port       = 587;
     $mail->CharSet    = 'UTF-8';
@@ -34,40 +34,66 @@ try {
     $mail->setFrom('nexusgamingclubsupport@gmail.com', 'Soporte Nexus');
     $mail->addAddress('nexusgamingclubsupport@gmail.com', 'Admin Nexus');
     $mail->addReplyTo($email, $nombre);
+
     $mail->isHTML(true);
-    $mail->Subject = "Nuevo Ticket de Soporte: $asunto";
-    $mail->Body    = "
-        <h2>Nueva solicitud de soporte</h2>
-        <p><strong>Nombre:</strong> {$nombre}</p>
-        <p><strong>Email:</strong> {$email}</p>
-        <p><strong>Categoría:</strong> {$categoria}</p>
-        <p><strong>Asunto:</strong> {$asunto}</p>
-        <p><strong>Mensaje:</strong></p>
-        <p>" . nl2br(htmlspecialchars($mensaje)) . "</p>
-    ";
+    
+    if ($categoria === 'sugerencia') {
+        $mail->Subject = "💡 Nueva Sugerencia de Mejora: $asunto";
+        $mail->Body    = "
+            <h2>Nueva Sugerencia Recibida</h2>
+            <p><strong>De:</strong> {$nombre} ({$email})</p>
+            <p><strong>Asunto:</strong> {$asunto}</p>
+            <p><strong>Idea:</strong></p>
+            <p>" . nl2br(htmlspecialchars($mensaje)) . "</p>
+        ";
+    } else {
+        $mail->Subject = "Nuevo Ticket de Soporte: $asunto";
+        $mail->Body    = "
+            <h2>Nueva solicitud de soporte</h2>
+            <p><strong>Nombre:</strong> {$nombre}</p>
+            <p><strong>Email:</strong> {$email}</p>
+            <p><strong>Categoría:</strong> {$categoria}</p>
+            <p><strong>Asunto:</strong> {$asunto}</p>
+            <p><strong>Mensaje:</strong></p>
+            <p>" . nl2br(htmlspecialchars($mensaje)) . "</p>
+        ";
+    }
+    
     $mail->send();
 
     $mail->clearAddresses();
     $mail->clearReplyTos();
-
     $mail->addAddress($email, $nombre);
     
-    $mail->Subject = "Hemos recibido tu mensaje - Soporte Nexus";
-    $mail->Body    = "
-        <h2>¡Hola, {$nombre}!</h2>
-        <p>Este es un correo automático para confirmarte que hemos recibido tu solicitud de soporte.</p>
-        <p>Nuestro equipo revisará tu caso y te responderá a este mismo correo lo antes posible.</p>
-        <br>
-        <p><strong>Resumen de tu mensaje:</strong></p>
-        <p><strong>Asunto:</strong> {$asunto}</p>
-        <p><strong>Categoría:</strong> {$categoria}</p>
-        <p><em>\" " . nl2br(htmlspecialchars($mensaje)) . " \"</em></p>
-        <br>
-        <p>¡Gracias por confiar en Nexus!</p>
-    ";
+    if ($categoria === 'sugerencia') {
+        $mail->Subject = "¡Hemos recibido tu sugerencia! - Nexus";
+        $mail->Body    = "
+            <h2>¡Hola, {$nombre}!</h2>
+            <p>Muchas gracias por escribirnos. Te confirmamos que hemos recibido tu idea o sugerencia sobre: <strong>{$asunto}</strong>.</p>
+            <p>Nuestro equipo de desarrollo revisará tu propuesta y la tendrá muy en cuenta para las próximas actualizaciones de Nexus.</p>
+            <br>
+            <p>¡Gracias por ayudarnos a mejorar la plataforma!</p>
+            <p>- El equipo de Nexus</p>
+        ";
+    } else {
+        $mail->Subject = "Hemos recibido tu mensaje - Soporte Nexus";
+        $mail->Body    = "
+            <h2>¡Hola, {$nombre}!</h2>
+            <p>Este es un correo automático para confirmarte que hemos recibido tu solicitud de soporte.</p>
+            <p>Nuestro equipo revisará tu caso y te responderá a este mismo correo lo antes posible.</p>
+            <br>
+            <p><strong>Resumen de tu mensaje:</strong></p>
+            <p><strong>Asunto:</strong> {$asunto}</p>
+            <p><strong>Categoría:</strong> {$categoria}</p>
+            <p><em>\" " . nl2br(htmlspecialchars($mensaje)) . " \"</em></p>
+            <br>
+            <p>¡Gracias por confiar en Nexus!</p>
+        ";
+    }
+
     $mail->send();
 
-    header("Location: soporte.php?msg=" . urlencode('¡Mensaje enviado! Revisa tu bandeja de entrada, te hemos mandado una confirmación.'));
+    header("Location: soporte.php?msg=" . urlencode('¡Mensaje enviado! Revisa tu bandeja de entrada.'));
     exit;
 
 } catch (Exception $e) {

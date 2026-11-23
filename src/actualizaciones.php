@@ -94,7 +94,6 @@
                     <li><strong style="color: #9b59b6;">⚙️ Sistema de Usuarios:</strong> Registro, inicio de sesión seguro, recuperación de contraseña por correo y perfiles personalizados.</li>
                     <li><strong style="color: #9b59b6;">🛡️ Gestión de Clubs:</strong> Crea tu propio equipo, hazlo público o privado, invita a tus amigos y gestiona a tus miembros.</li>
                     <li><strong style="color: #9b59b6;">🏆 Torneos Competitivos:</strong> Inscríbete individualmente o apunta a todo tu club en los torneos de Fortnite, CS2, Call of Duty y Rocket League.</li>
-                    <li><strong style="color: #9b59b6;">👑 Panel de Administración:</strong> Centro de control total para crear torneos, banear usuarios y enviar correos masivos.</li>
                     <li><strong style="color: #9b59b6;">📬 Soporte:</strong> Sistema de tickets directo a nuestro correo para ayudarte con cualquier problema.</li>
                 </ul>
                 

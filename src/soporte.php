@@ -69,6 +69,7 @@
                 <label for="categoria">Categoría *</label>
                 <select id="categoria" name="categoria" required>
                     <option value="">Selecciona una categoría</option>
+                    <option value="sugerencia">💡 Sugerencia / Mejora</option>
                     <option value="cuenta">Problema con mi cuenta</option>
                     <option value="torneo">Inscripción / torneo</option>
                     <option value="pago">Pagos y premios</option>
