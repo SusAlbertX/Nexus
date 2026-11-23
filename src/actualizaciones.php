@@ -52,20 +52,33 @@
         <div style="position: relative; margin-bottom: 50px;">
             <div style="position: absolute; left: -41px; top: 0; width: 20px; height: 20px; background: #333; border-radius: 50%; border: 4px solid #121212;"></div>
             
-            <div class="panel" style="margin: 0; opacity: 0.8; border: 1px dashed #555;">
-                <span style="color: #f39c12; font-weight: bold; font-size: 0.9em;">Próximamente</span>
-                <h2 style="margin-top: 5px; color: white;">💬 Chat de Clubs (v1.1)</h2>
-                <p style="color: #aaa; margin-bottom: 20px;">Estamos trabajando en una nueva forma de comunicación para que los equipos puedan coordinarse sin salir de Nexus.</p>
+            <div class="panel" style="margin: 0; opacity: 0.6; border: 1px dashed #555;">
+                <span style="color: #3498db; font-weight: bold; font-size: 0.9em;">Próximamente</span>
+                <h2 style="margin-top: 5px; color: white;">🌐 Nexus Forums (v2.0)</h2>
+                <p style="color: #aaa; margin-bottom: 20px;">El foro oficial de Nexus. Un espacio global donde toda la comunidad podrá debatir, buscar equipo y compartir noticias.</p>
                 
                 <ul style="color: #ccc; line-height: 1.8; font-size: 0.95em; padding-left: 20px;">
-                    <li><strong style="color: #f39c12;">📝 Muro de mensajes:</strong> Un espacio privado dentro de cada club para hablar de estrategias.</li>
-                    <li><strong style="color: #f39c12;">🗑️ Moderación:</strong> Los líderes podrán borrar mensajes si hay spam.</li>
-                    <li><strong style="color: #f39c12;">⚡ Notificaciones:</strong> Avisos visuales cuando alguien escriba en tu club.</li>
+                    <li><strong style="color: #3498db;">📌 Creación de Hilos:</strong> Publica temas con texto e imágenes (estilo Reddit).</li>
+                    <li><strong style="color: #3498db;">💬 Comentarios:</strong> Responde a los hilos y cita a otros usuarios.</li>
+                    <li><strong style="color: #3498db;">🔥 Categorías:</strong> Debates generales, buscar equipo, soporte técnico y más.</li>
+                    <li><strong style="color: #3498db;">🛡️ Moderación:</strong> El admin y los moderadores podrán cerrar hilos o borrar comentarios ofensivos.</li>
                 </ul>
+            </div>
+        </div>
+
+        <div style="position: relative; margin-bottom: 50px;">
+            <div style="position: absolute; left: -41px; top: 0; width: 20px; height: 20px; background: #333; border-radius: 50%; border: 4px solid #121212;"></div>
+            
+            <div class="panel" style="margin: 0; opacity: 0.8; border: 1px dashed #555;">
+                <span style="color: #f39c12; font-weight: bold; font-size: 0.9em;">Próximamente</span>
+                <h2 style="margin-top: 5px; color: white;">💬 Chat de Clubs y Encuestas (v1.5)</h2>
+                <p style="color: #aaa; margin-bottom: 20px;">Mejoras enfocadas en la comunicación y organización de los equipos.</p>
                 
-                <div style="margin-top: 20px; background: #121212; padding: 10px 15px; border-radius: 8px; border-left: 4px solid #f39c12; font-size: 0.9em; color: #aaa;">
-                    <em>"El próximo gran paso para la comunidad de Nexus. ¡Muy pronto!"</em>
-                </div>
+                <ul style="color: #ccc; line-height: 1.8; font-size: 0.95em; padding-left: 20px;">
+                    <li><strong style="color: #f39c12;">📝 Muro de mensajes:</strong> Un chat privado para cada club. ¡Ahora con soporte para imágenes (PNG/JPG)!</li>
+                    <li><strong style="color: #f39c12;">🗑️ Moderación:</strong> Los líderes y dueños de los mensajes podrán borrarlos.</li>
+                    <li><strong style="color: #f39c12;">📊 Club Polls (Encuestas):</strong> Los líderes podrán lanzar encuestas (hasta 4 opciones) para decidir mapas, torneos o horarios. ¡Con votación única o múltiple y fecha límite!</li>
+                </ul>
             </div>
         </div>
 
