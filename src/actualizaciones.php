@@ -71,6 +71,26 @@
             </div>
         </div>
 
+        <div style="position: relative; margin-bottom: 50px;">
+            <div style="position: absolute; left: -41px; top: 0; width: 20px; height: 20px; background: #333; border-radius: 50%; border: 4px solid #121212;"></div>
+            
+            <div class="panel" style="margin: 0; opacity: 0.8; border: 1px dashed #555;">
+                <span style="color: #f39c12; font-weight: bold; font-size: 0.9em;">Próximamente</span>
+                <h2 style="margin-top: 5px; color: white;">💬 Chat de Clubs (v1.1)</h2>
+                <p style="color: #aaa; margin-bottom: 20px;">Estamos trabajando en una nueva forma de comunicación para que los equipos puedan coordinarse sin salir de Nexus.</p>
+                
+                <ul style="color: #ccc; line-height: 1.8; font-size: 0.95em; padding-left: 20px;">
+                    <li><strong style="color: #f39c12;">📝 Muro de mensajes:</strong> Un espacio privado dentro de cada club para hablar de estrategias.</li>
+                    <li><strong style="color: #f39c12;">🗑️ Moderación:</strong> Los líderes podrán borrar mensajes si hay spam.</li>
+                    <li><strong style="color: #f39c12;">⚡ Notificaciones:</strong> Avisos visuales cuando alguien escriba en tu club.</li>
+                </ul>
+                
+                <div style="margin-top: 20px; background: #121212; padding: 10px 15px; border-radius: 8px; border-left: 4px solid #f39c12; font-size: 0.9em; color: #aaa;">
+                    <em>"El próximo gran paso para la comunidad de Nexus. ¡Muy pronto!"</em>
+                </div>
+            </div>
+        </div>
+
     </div>
 
 </section>
