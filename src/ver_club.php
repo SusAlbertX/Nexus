@@ -143,37 +143,29 @@ $error = $_GET['err'] ?? '';
         </div>
     </div>
 
-    <div class="panel" style="margin-top: 25px; border-top: 4px solid #3498db;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h3 style="margin-top: 0; color: #3498db;">📊 Club Polls</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 25px;">
+        
+        <div class="panel" style="opacity: 0.7; border: 1px dashed #555; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 250px;">
+            <div style="font-size: 3em; margin-bottom: 10px;">💬</div>
+            <h3 style="margin: 0; color: #f39c12;">Chat de Club</h3>
+            <p style="color: #777; font-size: 0.9em; margin-top: 10px;">Un espacio privado para hablar con tus compañeros de equipo.</p>
+            <span style="background: #333; color: #aaa; padding: 5px 15px; border-radius: 20px; font-size: 0.8em; font-weight: bold; margin-top: 15px;">🚧 Próximamente (v1.5)</span>
+        </div>
+
+        <div class="panel" style="opacity: 0.7; border: 1px dashed #555; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 250px;">
+            <div style="font-size: 3em; margin-bottom: 10px;">📊</div>
+            <h3 style="margin: 0; color: #3498db;">Club Polls</h3>
+            <p style="color: #777; font-size: 0.9em; margin-top: 10px;">Decidid juntos a qué torneos apuntaros o qué mapas jugar.</p>
             
             <?php if ($club['lider_id'] == $mi_id): ?>
-                <button class="btn-primario" style="background: #3498db; padding: 8px 15px; font-size: 0.9em;" onclick="alert('¡Próximamente! Estamos trabajando en el creador de encuestas.')">➕ Crear Encuesta</button>
+                <button disabled style="background: #333; color: #777; padding: 8px 20px; border-radius: 8px; border: none; font-weight: bold; margin-top: 15px; cursor: not-allowed;">
+                    ➕ Crear Encuesta
+                </button>
+            <?php else: ?>
+                <span style="background: #333; color: #aaa; padding: 5px 15px; border-radius: 20px; font-size: 0.8em; font-weight: bold; margin-top: 15px;">🚧 Próximamente (v1.5)</span>
             <?php endif; ?>
         </div>
 
-        <?php
-        $stmt_encuesta = $pdo->prepare("SELECT * FROM encuestas_club WHERE club_id = ?");
-        $stmt_encuesta->execute([$club_id]);
-        $encuesta = $stmt_encuesta->fetch();
-
-        if ($encuesta): ?>
-            <div style="background: #121212; padding: 20px; border-radius: 10px; border: 1px solid #333; margin-top: 15px;">
-                <h4 style="color: white; margin-top: 0;"><?= e($encuesta['pregunta']) ?></h4>
-                <p style="color: #aaa; font-size: 0.9em;">Creada por el líder. (Sistema de votación en desarrollo...)</p>
-                <?php if ($club['lider_id'] == $mi_id): ?>
-                    <form action="accion_club.php" method="POST" style="margin-top: 15px;">
-                        <input type="hidden" name="accion" value="borrar_encuesta">
-                        <input type="hidden" name="club_id" value="<?= $club_id ?>">
-                        <button type="submit" style="background: transparent; color: #e74c3c; border: 1px solid #e74c3c; padding: 5px 15px; font-size: 0.8em;" onclick="return confirm('¿Seguro que quieres borrar la encuesta actual?');">🗑️ Borrar Encuesta</button>
-                    </form>
-                <?php endif; ?>
-            </div>
-        <?php else: ?>
-            <div style="background: #121212; border: 1px dashed #333; padding: 20px; border-radius: 10px; text-align: center; margin-top: 15px;">
-                <p style="color: #777; margin: 0;">No hay encuestas activas en este club.</p>
-            </div>
-        <?php endif; ?>
     </div>
 
 </section>
