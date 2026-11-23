@@ -18,7 +18,7 @@ $destacados = array_slice(datos_torneos(), 0, 3);
     <div class="container">
         <p class="logo" onclick="location.href='index.php'">NEXUS</p>
         <nav>
-            <a href="index.php" class="activo">Inicio</a>
+            <a href="index.php" style="color: purple;">Inicio</a>
             <a href="torneo.php">Torneos</a>
             <a href="clubs.php">Clubs</a>
             <a href="servidores.php">Servidores</a>
@@ -44,7 +44,7 @@ $destacados = array_slice(datos_torneos(), 0, 3);
 
 <section class="hero">
     <h1>🎮 Bienvenido a Nexus 🎮</h1>
-    <p>El club donde la comunidad gamer se reúne para competir, mejorar y ganar.</p>
+    <p>El club donde la <span class="color-acento">comunidad gamer</span> se reúne para competir, mejorar y ganar.</p>
     <div style="margin-top: 30px; display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
         <button class="btn-primario" onclick="location.href='torneo.php'">Ver torneos</button>
         <button class="btn-outline" onclick="location.href='soporte.php'">Necesito ayuda</button>
