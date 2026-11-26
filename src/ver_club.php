@@ -116,6 +116,12 @@ $error = $_GET['err'] ?? '';
 
             <?php if ($club['lider_id'] == $mi_id): ?>
                 <button class="btn-primario" style="width: 100%; margin-top: 20px;" onclick="location.href='mi_club.php?id=<?= $club['id'] ?>'">⚙️ Gestionar mi Club</button>
+            <?php elseif ($soy_miembro): ?>
+                <form action="accion_club.php" method="POST" onsubmit="return confirm('¿Seguro que quieres salir del club? Seguirás inscrito en los torneos pero ya no aparecerás con el club.');" style="margin-top: 20px;">
+                    <input type="hidden" name="accion" value="salir_club">
+                    <input type="hidden" name="club_id" value="<?= $club['id'] ?>">
+                    <button type="submit" style="width: 100%; background: transparent; color: #e74c3c; border: 1px solid #e74c3c; box-shadow: none; padding: 10px; border-radius: 10px; font-weight: bold; cursor: pointer;">🚪 Salir del Club</button>
+                </form>
             <?php endif; ?>
         </div>
 

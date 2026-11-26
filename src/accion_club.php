@@ -209,7 +209,23 @@ elseif ($accion === 'expulsar') {
 
     $stmt = $pdo->prepare("DELETE FROM miembros_club WHERE club_id = ? AND usuario_id = ?");
     $stmt->execute([$club_id, $usuario_id]);
+    
+    $stmt = $pdo->prepare("UPDATE inscripciones_torneo SET club_id = NULL WHERE club_id = ? AND usuario_id = ?");
+    $stmt->execute([$club_id, $usuario_id]);
+
     header("Location: mi_club.php?id=" . $club_id . "&msg=" . urlencode('Miembro expulsado del club.'));
+    exit;
+}
+elseif ($accion === 'salir_club') {
+    $club_id = (int)$_POST['club_id'];
+
+    $stmt = $pdo->prepare("DELETE FROM miembros_club WHERE club_id = ? AND usuario_id = ?");
+    $stmt->execute([$club_id, $mi_id]);
+
+    $stmt = $pdo->prepare("UPDATE inscripciones_torneo SET club_id = NULL WHERE club_id = ? AND usuario_id = ?");
+    $stmt->execute([$club_id, $mi_id]);
+
+    header("Location: clubs.php?msg=" . urlencode('Has salido del club. Sigues inscrito en los torneos donde estabas, pero ya no apareces con el club.'));
     exit;
 }
 elseif ($accion === 'borrar_encuesta') {

@@ -105,19 +105,60 @@ $error = $_GET['err'] ?? '';
             <?php else: ?>
                 <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
                     <?php foreach ($torneos as $t): ?>
-                        <div style="background: #121212; padding: 15px; border-radius: 10px; border: 1px solid #333; display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <strong style="color: white;"><?= e($t['titulo']) ?></strong>
-                                <div style="color: #9b59b6; font-size: 0.8em;"><?= e($t['juego']) ?> - <?= date('d/m/Y H:i', strtotime($t['fecha_inicio'])) ?></div>
+                        <div style="background: #121212; padding: 15px; border-radius: 10px; border: 1px solid #333; margin-bottom: 10px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <strong style="color: white;"><?= e($t['titulo']) ?></strong>
+                                    <div style="color: #9b59b6; font-size: 0.8em;"><?= e($t['juego']) ?> - <?= date('d/m/Y H:i', strtotime($t['fecha_inicio'])) ?></div>
+                                </div>
+                                <div style="display: flex; gap: 10px;">
+                                    <a href="editar_torneo.php?id=<?= $t['id'] ?>" style="background: #f39c12; border: none; padding: 5px 15px; font-size: 0.8em; text-decoration: none; color: white; border-radius: 5px; font-weight: bold; display: inline-flex; align-items: center;">✏️ Editar</a>
+                                    
+                                    <form action="accion_admin.php" method="POST" onsubmit="return confirm('¿Seguro que quieres borrar este torneo?');" style="margin: 0;">
+                                        <input type="hidden" name="accion" value="borrar_torneo">
+                                        <input type="hidden" name="torneo_id" value="<?= $t['id'] ?>">
+                                        <button type="submit" style="background: #e74c3c; border: none; padding: 5px 15px; font-size: 0.8em;">Borrar</button>
+                                    </form>
+                                </div>
                             </div>
-                            <div style="display: flex; gap: 10px;">
-                                <a href="editar_torneo.php?id=<?= $t['id'] ?>" style="background: #f39c12; border: none; padding: 5px 15px; font-size: 0.8em; text-decoration: none; color: white; border-radius: 5px; font-weight: bold; display: inline-flex; align-items: center;">✏️ Editar</a>
+
+                            <div style="margin-top: 15px; border-top: 1px solid #333; padding-top: 10px;">
+                                <button onclick="toggleInscritos(<?= $t['id'] ?>)" style="background: transparent; color: #3498db; border: 1px solid #3498db; padding: 5px 15px; font-size: 0.8em; width: 100%; margin-bottom: 10px;">👥 Ver / Gestionar Inscritos</button>
                                 
-                                <form action="accion_admin.php" method="POST" onsubmit="return confirm('¿Seguro que quieres borrar este torneo?');" style="margin: 0;">
-                                    <input type="hidden" name="accion" value="borrar_torneo">
-                                    <input type="hidden" name="torneo_id" value="<?= $t['id'] ?>">
-                                    <button type="submit" style="background: #e74c3c; border: none; padding: 5px 15px; font-size: 0.8em;">Borrar</button>
-                                </form>
+                                <div id="inscritos-<?= $t['id'] ?>" style="display: none;">
+                                    <?php
+                                    $stmt_ins = $pdo->prepare("SELECT i.id, i.usuario_id, u.nombre, i.club_id, c.nombre AS club_nombre 
+                                                               FROM inscripciones_torneo i 
+                                                               JOIN usuarios u ON i.usuario_id = u.id 
+                                                               LEFT JOIN clubs c ON i.club_id = c.id 
+                                                               WHERE i.torneo_id = ?");
+                                    $stmt_ins->execute([$t['id']]);
+                                    $inscritos = $stmt_ins->fetchAll();
+                                    ?>
+                                    
+                                    <?php if (empty($inscritos)): ?>
+                                        <p style="color: #777; font-size: 0.9em; text-align: center;">No hay jugadores inscritos.</p>
+                                    <?php else: ?>
+                                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                                            <?php foreach ($inscritos as $ins): ?>
+                                                <div style="background: #2a2a2a; padding: 10px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center;">
+                                                    <div style="font-size: 0.9em;">
+                                                        <span style="color: white; font-weight: bold;"><?= e($ins['nombre']) ?></span>
+                                                        <?php if ($ins['club_nombre']): ?>
+                                                            <span style="color: #9b59b6; font-size: 0.8em; margin-left: 10px;">(<?= e($ins['club_nombre']) ?>)</span>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                    <form action="accion_admin.php" method="POST" onsubmit="return confirm('¿Seguro que quieres expulsar a este jugador del torneo?');">
+                                                        <input type="hidden" name="accion" value="expulsar_torneo">
+                                                        <input type="hidden" name="torneo_id" value="<?= $t['id'] ?>">
+                                                        <input type="hidden" name="usuario_id" value="<?= $ins['usuario_id'] ?>">
+                                                        <button type="submit" style="background: transparent; color: #e74c3c; border: 1px solid #e74c3c; padding: 2px 8px; font-size: 0.8em;">❌ Expulsar</button>
+                                                    </form>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -250,5 +291,17 @@ $error = $_GET['err'] ?? '';
 </section>
 
 <footer><div class="container"><p>&copy; Nexus 2026 - Admin</p></div></footer>
+
+<script>
+    function toggleInscritos(id) {
+        var div = document.getElementById('inscritos-' + id);
+        if (div.style.display === 'none') {
+            div.style.display = 'block';
+        } else {
+            div.style.display = 'none';
+        }
+    }
+</script>
+
 </body>
 </html>

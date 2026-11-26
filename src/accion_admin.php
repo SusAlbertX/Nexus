@@ -49,7 +49,7 @@ elseif ($accion === 'editar_torneo') {
     $juego = $_POST['juego'];
     $premio = trim($_POST['premio']);
     $max_jugadores = (int)$_POST['max_jugadores'];
-    $fecha_inicio = str_replace('T', ' ', $_POST['fecha_inicio']); // Convertimos el formato HTML al de SQL
+    $fecha_inicio = str_replace('T', ' ', $_POST['fecha_inicio']);
     $imagen = trim($_POST['imagen']);
     $descripcion = trim($_POST['descripcion']);
 
@@ -93,8 +93,21 @@ elseif ($accion === 'expulsar_admin') {
     
     $stmt = $pdo->prepare("DELETE FROM miembros_club WHERE club_id = ? AND usuario_id = ?");
     $stmt->execute([$club_id, $usuario_id]);
+
+    $stmt = $pdo->prepare("UPDATE inscripciones_torneo SET club_id = NULL WHERE club_id = ? AND usuario_id = ?");
+    $stmt->execute([$club_id, $usuario_id]);
     
     header("Location: admin.php?msg=" . urlencode('Usuario expulsado del club.'));
+    exit;
+}
+elseif ($accion === 'expulsar_torneo') {
+    $torneo_id = (int)$_POST['torneo_id'];
+    $usuario_id = (int)$_POST['usuario_id'];
+
+    $stmt = $pdo->prepare("DELETE FROM inscripciones_torneo WHERE torneo_id = ? AND usuario_id = ?");
+    $stmt->execute([$torneo_id, $usuario_id]);
+    
+    header("Location: admin.php?msg=" . urlencode('Jugador expulsado del torneo.'));
     exit;
 }
 else {
