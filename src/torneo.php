@@ -90,7 +90,7 @@ if ($mis_torneos && isset($_SESSION['usuario_id'])) {
         <?php else: ?>
             <?php foreach ($torneos as $t): ?>
             <div class="torneo-card">
-                <img class="torneo-imagen" src="<?= $t['imagen'] ? e($t['imagen']) : 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80' ?>" alt="<?= e($t['titulo']) ?>">
+                <img class="torneo-imagen" src="<?= $t['imagen'] ? e($t['imagen']) : 'https://wallpapers.com/images/hd/purple-abstract-background-chafr7li4ofrhud6.jpg' ?>" alt="<?= e($t['titulo']) ?>">
                 <div class="torneo-contenido">
                     <span class="categoria cat-<?= e($t['juego']) ?>"><?= strtoupper(e($t['juego'])) ?></span>
                     <h3 class="torneo-titulo"><?= e($t['titulo']) ?></h3>
