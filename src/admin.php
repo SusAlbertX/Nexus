@@ -35,8 +35,8 @@ $error = $_GET['err'] ?? '';
     </div>
 </header>
 
-<section class="hero" style="min-height: 20vh; background-image: linear-gradient(0deg, rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1600&q=80');">
-    <h1>👑 Panel de Administración</h1>
+<section class="hero" style="min-height: 30vh; background-image: linear-gradient(0deg, rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('uploads/fondo.jpg');">
+        <h1>👑 Panel de Administración</h1>
     <p>Bienvenido, dueño de Nexus.</p>
 </section>
 

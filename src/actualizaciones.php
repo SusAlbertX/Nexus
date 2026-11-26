@@ -41,8 +41,7 @@
     </div>
 </header>
 
-<section class="hero" style="min-height: 30vh; background-image: linear-gradient(0deg, rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1600&q=80');">
-    <h1>📜 Registro de Cambios</h1>
+<section class="hero" style="min-height: 30vh; background-image: linear-gradient(0deg, rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('uploads/fondo.jpg');">    <h1>📜 Registro de Cambios</h1>
     <p>Descubre todas las novedades y mejoras que llegan a Nexus.</p>
 </section>
 
